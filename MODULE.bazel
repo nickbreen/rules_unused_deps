@@ -1,4 +1,4 @@
-bazel_dep(name = "rules_java", version = "7.11.1")
+bazel_dep(name = "rules_java", version = "8.12.0")
 bazel_dep(name = "rules_jvm_external", version = "6.7")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -15,3 +15,15 @@ maven.install(
 )
 
 use_repo(maven, "maven")
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+http_file(
+    name = "deps.proto",
+    urls = ["https://raw.githubusercontent.com/bazelbuild/bazel/refs/heads/release-8.3.1/src/main/protobuf/deps.proto"],
+    sha256 = "b861dbce04177df9e4b7204876b2f27e18f40eb6d20b3dffefecdd2baf3cfe92",
+)
+
+bazel_dep(name = "toolchains_protoc", version = "0.4.3")
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+use_repo(protoc, "toolchains_protoc_hub")
+register_toolchains("@toolchains_protoc_hub//:all")
