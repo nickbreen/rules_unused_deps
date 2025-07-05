@@ -1,29 +1,25 @@
 def _unused_deps(ctx):
-    jdeps_proto = [
-        f.jdeps
-        for f in ctx.attr.subject[JavaInfo].java_outputs
-    ]
-    jdeps_text_proto = [
-        ctx.actions.declare_file("%s.textproto" % f.basename, sibling = f)
-        for f in jdeps_proto
-    ]
-    # should we loop the ctx.actions.run_shell instead?
-    ctx.actions.run_shell(
-        mnemonic = "JdepsTextProto",
-        inputs = jdeps_proto,
-        outputs = jdeps_text_proto,
-        command = '''
-        set -xeuo pipefail
-        for jdep in "${@:3}"
-        do
-            ${1?} --decode=blaze_deps.Dependencies ${2?} < $jdep > ${jdep}.textproto
-        done
-        ''',
-        arguments = [ctx.actions.args().add(ctx.file.protoc).add(ctx.file.proto).add_all(jdeps_proto)],
-        tools = ctx.files.protoc + ctx.files.proto,
-    )
+    outs = []
+    for f in ctx.attr.subject[JavaInfo].java_outputs:
+        out = ctx.actions.declare_file("%s.textproto" % f.jdeps.basename, sibling = f.jdeps)
+        outs.append(out)
+        ctx.actions.run_shell(
+            mnemonic = "JdepsTextProto",
+            inputs = [f.jdeps],
+            outputs = [out],
+            command = ''' ${1?} --decode=${2?} ${3?} < ${4?} > ${5?} ''',
+            arguments = [
+                ctx.actions.args().
+                    add(ctx.file.protoc).
+                    add(ctx.attr.msg).
+                    add(ctx.file.proto).
+                    add(f.jdeps).
+                    add(out)
+                ],
+            tools = ctx.files.protoc + ctx.files.proto,
+        )
     return [
-        DefaultInfo(files = depset(jdeps_text_proto))
+        DefaultInfo(files = depset(outs))
     ]
 
 unused_deps = rule(
@@ -43,5 +39,8 @@ unused_deps = rule(
             default = "@deps.proto//file:deps.proto",
             allow_single_file = [".proto"],
         ),
+        "msg": attr.string(
+            default = "blaze_deps.Dependencies",
+        )
     },
 )
