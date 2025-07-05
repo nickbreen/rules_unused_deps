@@ -1,5 +1,5 @@
 load("@rules_jvm_external//:defs.bzl", "artifact")
-load("@rules_unused_deps//:defs.bzl", "unused_deps")
+load("@rules_unused_deps//:rules.bzl", "unused_deps")
 
 filegroup(
     name = "srcs",
