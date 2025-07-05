@@ -17,13 +17,13 @@ def _unused_deps(ctx):
                 command = ''' ${1?} --decode=${2?} ${3?} < ${4?} > ${5?} ''',
                 arguments = [
                     ctx.actions.args().
-                        add(ctx.file.protoc).
+                        add(ctx.file._protoc).
                         add(ctx.attr.msg).
-                        add(ctx.file.proto).
+                        add(ctx.file._proto).
                         add(java_info.jdeps).
                         add(text_proto)
                     ],
-                tools = ctx.files.protoc + ctx.files.proto,
+                tools = ctx.files._protoc + ctx.files._proto,
             )
     return [
         DefaultInfo(files = depset(text_protos))
@@ -36,15 +36,15 @@ unused_deps = rule(
             mandatory = True,
             providers = [JavaInfo],
         ),
-        "protoc": attr.label(
-            default = "@protobuf//:bin/protoc",
+        "_protoc": attr.label(
+            default = "@bazel_tools//tools/proto:protoc",
             allow_single_file = True,
             executable = True,
             cfg = "exec",
         ),
-        "proto": attr.label(
+        "_proto": attr.label(
             default = "@bazel_tools//src/main/protobuf:deps.proto",
-            allow_single_file = [".proto"],
+            allow_single_file = True,
         ),
         "msg": attr.string(
             default = "blaze_deps.Dependencies",
