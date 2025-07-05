@@ -1,0 +1,34 @@
+load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@rules_unused_deps//:defs.bzl", "unused_deps")
+
+java_library(
+    name = "hello1",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+    ],
+    runtime_deps = [
+        # this is in the right place, it is unused at compile time and is in runtime_deps
+        artifact("org.slf4j:slf4j-simple"),
+    ],
+)
+
+unused_deps(
+    name = "hello1_unused_deps",
+    subject = ":hello1",
+)
+
+java_library(
+    name = "hello2",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+        # this is in the wrong place, it is unused at compile time and should be in runtime_deps
+        artifact("org.slf4j:slf4j-simple"),
+    ],
+)
+
+unused_deps(
+    name = "hello2_unused_deps",
+    subject = ":hello2",
+)
