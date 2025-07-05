@@ -28,7 +28,7 @@ def _unused_deps(target, ctx):
                 ],
             tools = ctx.files._protoc + ctx.files._proto,
         )
-    direct_deps = ctx.rule.attr.deps
+    direct_deps = [jo.compile_jar for d in ctx.rule.attr.deps for jo in d[JavaInfo].java_outputs]
     direct_deps_text = []
     if direct_deps:
         out = ctx.actions.declare_file(
@@ -36,8 +36,13 @@ def _unused_deps(target, ctx):
         direct_deps_text.append(out)
         ctx.actions.write(
             out,
-            "\n".join([f.path for d in direct_deps for f in d.files.to_list()]) + "\n")
-
+            "\n".join([
+                "%s\t%s" % (
+                    d.owner,
+                    d.path
+                )
+                for d in direct_deps
+            ]) + "\n")
     return [
         UnusedDepsInfo(
             direct_deps = direct_deps,

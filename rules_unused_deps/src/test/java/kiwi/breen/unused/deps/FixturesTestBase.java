@@ -7,19 +7,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
 
 public class FixturesTestBase
 {
-    protected static List<String> loadTextFixture(final String resource) throws IOException
+    private static final Pattern LINE_PARSER = Pattern.compile("(.*)\\t(.*)");
+
+    protected static Map<String, String> loadTextFixture(final String resource) throws IOException
     {
         try (
                 final InputStream in = FixturesTestBase.class.getResourceAsStream(resource);
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(in)))
         {
-            return reader.lines().toList();
+            return reader.lines()
+                    .map(LINE_PARSER::matcher)
+                    .filter(Matcher::matches)
+                    .collect(Collectors.toMap(
+                            m -> m.group(1),
+                            m -> m.group(2)
+                    ));
         }
     }
 

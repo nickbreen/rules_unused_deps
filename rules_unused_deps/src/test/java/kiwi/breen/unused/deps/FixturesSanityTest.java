@@ -1,23 +1,22 @@
 package kiwi.breen.unused.deps;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +40,7 @@ public class FixturesSanityTest extends FixturesTestBase
     @Parameterized.Parameter(1)
     public int expectedDirectDependencyCount;
 
-    private List<String> dependencies;
+    private Map<String, String> dependencies;
 
     @Before
     public void setUp() throws IOException
@@ -59,7 +58,7 @@ public class FixturesSanityTest extends FixturesTestBase
     public void shouldHaveDirectDependencyCount()
     {
         assertThat(
-                dependencies,
+                dependencies.keySet(),
                 hasSize(expectedDirectDependencyCount)
         );
     }
@@ -74,9 +73,16 @@ public class FixturesSanityTest extends FixturesTestBase
                 equalTo(2));
         assertThat(
                 dependencies,
-                hasItems(
-                        containsString("org/slf4j/slf4j-api"),
-                        containsString("org/slf4j/slf4j-simple")
+                allOf(
+                        hasEntry(
+                                endsWith(":org_slf4j_slf4j_api"),
+                                containsString("org/slf4j/slf4j-api")
+                        ),
+                        hasEntry(
+                                endsWith(":org_slf4j_slf4j_simple"),
+                                containsString("org/slf4j/slf4j-simple")
+                        )
+
                 ));
     }
 
@@ -90,8 +96,33 @@ public class FixturesSanityTest extends FixturesTestBase
                 equalTo(1));
         assertThat(
                 dependencies,
-                hasItems(
+                hasEntry(
+                        endsWith(":org_slf4j_slf4j_api"),
                         containsString("org/slf4j/slf4j-api")
                 ));
+    }
+
+    @Test
+    public void sanityCheckMatcher()
+    {
+        final Map<String, String> map = Map.of(
+                "@@rules_jvm_external++maven+maven//:org_slf4j_slf4j_simple",
+                "bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-simple/2.0.17/processed_slf4j-simple-2.0.17.jar",
+                "@@rules_jvm_external++maven+maven//:org_slf4j_slf4j_api",
+                "bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-api/2.0.17/processed_slf4j-api-2.0.17.jar"
+        );
+
+        assertThat(map, hasEntry(
+                "@@rules_jvm_external++maven+maven//:org_slf4j_slf4j_simple",
+                "bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-simple/2.0.17/processed_slf4j-simple-2.0.17.jar"));
+
+        assertThat(map, hasEntry(
+                equalTo("@@rules_jvm_external++maven+maven//:org_slf4j_slf4j_simple"),
+                equalTo("bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-simple/2.0.17/processed_slf4j-simple-2.0.17.jar")));
+
+        assertThat(map, hasEntry(
+                endsWith(":org_slf4j_slf4j_simple"),
+                containsString("org/slf4j/slf4j-simple")));
+
     }
 }

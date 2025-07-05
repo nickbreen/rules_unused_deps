@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,7 +35,7 @@ public class DetectUnusedDepsTest extends FixturesTestBase
                         "/hello2.txt",
                         "/libhello2.jdeps",
                         contains(
-                            containsString("org/slf4j/slf4j-simple")
+                            containsString(":org_slf4j_slf4j_simple")
                         )
                 },
         });
@@ -47,14 +48,14 @@ public class DetectUnusedDepsTest extends FixturesTestBase
     @Parameterized.Parameter(2)
     public Matcher<Collection<String>> expectedUnusedDeps;
 
-    private Set<String> directDeps;
+    private Map<String, String> directDeps;
     private Deps.Dependencies usedDeps;
     private final UnusedDeps unusedDeps = new UnusedDeps();
 
     @Before
     public void setUp() throws Exception
     {
-        directDeps = new HashSet<>(loadTextFixture(directResource));
+        directDeps = loadTextFixture(directResource);
         usedDeps = loadProtoFixture(usedResource);
     }
 

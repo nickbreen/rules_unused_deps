@@ -1,2 +1,2 @@
-bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-api/2.0.17/processed_slf4j-api-2.0.17.jar
-bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-simple/2.0.17/processed_slf4j-simple-2.0.17.jar
+@@rules_jvm_external++maven+maven//:org_slf4j_slf4j_api	bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-api/2.0.17/header_slf4j-api-2.0.17.jar
+@@rules_jvm_external++maven+maven//:org_slf4j_slf4j_simple	bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-simple/2.0.17/header_slf4j-simple-2.0.17.jar
