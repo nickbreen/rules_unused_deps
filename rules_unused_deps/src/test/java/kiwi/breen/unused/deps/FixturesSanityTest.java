@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeThat;
 
 @RunWith(Parameterized.class)
-public class FixturesSanityTest
+public class FixturesSanityTest extends FixturesTestBase
 {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data()
@@ -46,7 +46,7 @@ public class FixturesSanityTest
     @Before
     public void setUp() throws IOException
     {
-        dependencies = loadFixture(resource);
+        dependencies = loadTextFixture(resource);
     }
 
     @Test
@@ -93,15 +93,5 @@ public class FixturesSanityTest
                 hasItems(
                         containsString("org/slf4j/slf4j-api")
                 ));
-    }
-
-    private static List<String> loadFixture(final String resource) throws IOException
-    {
-        try (
-                final InputStream in = FixturesSanityTest.class.getResourceAsStream(resource);
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(in)))
-        {
-            return reader.lines().toList();
-        }
     }
 }

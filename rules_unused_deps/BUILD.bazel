@@ -34,3 +34,11 @@ java_test(
     resources = resources,
     deps = deps,
 )
+
+java_test(
+    name = "unused-deps-detect-test",
+    test_class = "kiwi.breen.unused.deps.DetectUnusedDepsTest",
+    srcs = srcs,
+    resources = resources,
+    deps = deps,
+)
