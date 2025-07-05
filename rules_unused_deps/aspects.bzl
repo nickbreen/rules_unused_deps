@@ -28,10 +28,20 @@ def _unused_deps(target, ctx):
                 ],
             tools = ctx.files._protoc + ctx.files._proto,
         )
+    direct_deps = ctx.rule.attr.deps
+    direct_deps_text = []
+    if direct_deps:
+        out = ctx.actions.declare_file(
+            "%s.txt" % target.label.name)
+        direct_deps_text.append(out)
+        ctx.actions.write(
+            out,
+            "\n".join([f.path for d in direct_deps for f in d.files.to_list()]) + "\n")
 
     return [
         UnusedDepsInfo(
-            direct_deps = ctx.rule.attr.deps,
+            direct_deps = direct_deps,
+            direct_deps_text = direct_deps_text,
             used_deps = used_deps,
             used_deps_text_proto = used_deps_text_proto,
         )
