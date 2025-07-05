@@ -43,7 +43,7 @@ unused_deps = rule(
             cfg = "exec",
         ),
         "proto": attr.label(
-            default = "@deps.proto//file:deps.proto",
+            default = "@bazel_tools//src/main/protobuf:deps.proto",
             allow_single_file = [".proto"],
         ),
         "msg": attr.string(

@@ -4,14 +4,6 @@ module(
     compatibility_level = 1,
 )
 
-http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
-http_file(
-    name = "deps.proto",
-    downloaded_file_path = "deps.proto",
-    urls = ["https://raw.githubusercontent.com/bazelbuild/bazel/refs/heads/release-8.3.1/src/main/protobuf/deps.proto"],
-    sha256 = "b861dbce04177df9e4b7204876b2f27e18f40eb6d20b3dffefecdd2baf3cfe92",
-)
-
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "protobuf",
