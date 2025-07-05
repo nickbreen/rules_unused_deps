@@ -2,15 +2,5 @@
 # To use it as default, place it in the Bazel module or workspace root directory.
 # For more options, see https://github.com/JetBrains/hirschgarten/blob/main/commons/src/main/kotlin/org/jetbrains/bazel/projectview/README.md
 
-directories: .
 targets:
-  //:hello1
-  //:hello1_test
-  //:hello1_test_unused_deps
-  //:hello1_uber
-  //:hello1_uber_unused_deps
-  //:hello1_unused_deps
-  //:hello2
-  //:hello2_uber
-  //:hello2_uber_unused_deps
-  //:hello2_unused_deps
+  //...

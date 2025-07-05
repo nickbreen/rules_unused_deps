@@ -6,7 +6,9 @@ def _unused_deps(ctx):
         # so does not generate a jdeps output, but also means there is no unused
         # compile-time dependencies to check
         if java_info.jdeps:
-            text_proto = ctx.actions.declare_file("%s.textproto" % java_info.jdeps.basename, sibling = java_info.jdeps)
+            text_proto = ctx.actions.declare_file(
+                "%s.textproto" % java_info.jdeps.basename,
+                sibling = java_info.jdeps)
             text_protos.append(text_proto)
             ctx.actions.run_shell(
                 mnemonic = "JdepsTextProto",
