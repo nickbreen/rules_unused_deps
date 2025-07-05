@@ -33,9 +33,8 @@ unused_deps(
     subject = ":hello2",
 )
 
-# has no sources, so has no jdeps to check, but still has JavaInfo
 java_binary(
-    name = "hello",
+    name = "hello1_uber",
     main_class = "com.example.Hello",
     runtime_deps = [
         ":hello1",
@@ -43,6 +42,36 @@ java_binary(
 )
 
 unused_deps(
-    name = "hello_unused_deps",
-    subject = ":hello",
+    name = "hello1_uber_unused_deps",
+    subject = ":hello1_uber",
 )
+
+java_binary(
+    name = "hello2_uber",
+    main_class = "com.example.Hello",
+    runtime_deps = [
+        ":hello2",
+    ],
+)
+
+unused_deps(
+    name = "hello2_uber_unused_deps",
+    subject = ":hello2_uber",
+)
+
+java_test(
+    name = "hello1_test",
+    srcs = glob(["src/test/java/**"]),
+    test_class = "com.example.HelloTest",
+    deps = [
+        artifact("junit:junit"),
+        ":hello1",
+    ],
+)
+
+unused_deps(
+    name = "hello1_test_unused_deps",
+    subject = ":hello1_test",
+    testonly = True,
+)
+
