@@ -62,13 +62,13 @@ unused_deps(
     subject = ":unused-deps-used-test",
     testonly = True,
 )
-# unused_deps(
-#     name = "unused-deps-direct-test-unused-deps",
-#     subject = ":unused-deps-direct-test",
-#     testonly = True,
-# )
-# unused_deps(
-#     name = "unused-deps-detect-test-unused-deps",
-#     subject = ":unused-deps-detect-test",
-#     testonly = True,
-# )
+unused_deps(
+    name = "unused-deps-direct-test-unused-deps",
+    subject = ":unused-deps-direct-test",
+    testonly = True,
+)
+unused_deps(
+    name = "unused-deps-detect-test-unused-deps",
+    subject = ":unused-deps-detect-test",
+    testonly = True,
+)

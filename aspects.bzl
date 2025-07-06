@@ -1,4 +1,4 @@
-load(":defs.bzl", "UsedDepsInfo", "DirectDepsInfo", "DecodedUsedDepsInfo")
+load(":defs.bzl", "UsedDepsInfo", "DirectDepsInfo", "DecodedUsedDepsInfo", "UnusedDepsInfo")
 
 def _direct_deps(target, ctx):
     direct_deps = [
@@ -84,6 +84,7 @@ def _decode_used_deps(target, ctx):
 decode_used_deps = aspect(
     implementation = _decode_used_deps,
     attr_aspects = ['deps'],
+    requires = [used_deps],
     required_aspect_providers = [UsedDepsInfo],
     required_providers = [[JavaInfo]],
     provides = [DecodedUsedDepsInfo],
@@ -102,5 +103,48 @@ decode_used_deps = aspect(
             default = "blaze_deps.Dependencies",
             values = ["blaze_deps.Dependencies"]
         )
+    },
+)
+
+def _unused_deps(target, ctx):
+    outputs = []
+    print(
+        target.label,
+        target[UsedDepsInfo],
+        target[DirectDepsInfo],
+        target[UsedDepsInfo].used_deps and target[DirectDepsInfo].direct_deps)
+    if target[UsedDepsInfo].used_deps and target[DirectDepsInfo].direct_deps:
+        outputs.append(ctx.actions.declare_file("%s.unused.deps.txt" % ctx.label.name))
+        ctx.actions.run(
+            mnemonic = "UnusedDeps",
+            executable = ctx.executable._tool,
+            inputs = target[UsedDepsInfo].used_deps + target[DirectDepsInfo].direct_deps,
+            outputs = outputs,
+            arguments = [
+                ctx.actions.args()
+                        .add_all("--used-deps", target[UsedDepsInfo].used_deps)
+                        .add_all("--direct-deps", target[DirectDepsInfo].direct_deps)
+                        .add_all("--output", outputs)
+            ]
+        )
+    else:
+        print("nothing to do")
+    return [
+        UnusedDepsInfo(unused_deps = outputs)
+    ]
+
+unused_deps = aspect(
+    implementation = _unused_deps,
+    attr_aspects = ['deps'],
+    requires = [used_deps, direct_deps],
+    required_aspect_providers = [UsedDepsInfo, DirectDepsInfo],
+    required_providers = [[JavaInfo]],
+    provides = [UnusedDepsInfo],
+    attrs = {
+        "_tool": attr.label(
+            default = "//:unused-deps",
+            executable = True,
+            cfg = "exec",
+        ),
     },
 )
