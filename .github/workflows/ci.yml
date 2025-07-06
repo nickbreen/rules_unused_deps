@@ -34,9 +34,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
       - run: |
           set -o pipefail
-          git log
           git describe | xargs -t -r -l gh release create
         env:
           GH_TOKEN: ${{ github.token }}
