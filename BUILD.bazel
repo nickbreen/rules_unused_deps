@@ -1,4 +1,5 @@
 load("@rules_jvm_external//:defs.bzl", "artifact")
+load(":rules.bzl", "unused_deps")
 
 java_binary(
     name = "unused-deps",
@@ -49,3 +50,23 @@ java_test(
     resources = resources,
     deps = deps,
 )
+
+unused_deps(
+    name = "unused-deps-unused-deps",
+    subject = ":unused-deps",
+)
+# unused_deps(
+#     name = "unused-deps-used-test-unused-deps",
+#     subject = ":unused-deps-used-test",
+#     testonly = True,
+# )
+# unused_deps(
+#     name = "unused-deps-direct-test-unused-deps",
+#     subject = ":unused-deps-direct-test",
+#     testonly = True,
+# )
+# unused_deps(
+#     name = "unused-deps-detect-test-unused-deps",
+#     subject = ":unused-deps-detect-test",
+#     testonly = True,
+# )
