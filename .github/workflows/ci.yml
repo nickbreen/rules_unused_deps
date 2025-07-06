@@ -33,6 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          gh release create "$(git describe)"
+          set -o pipefail
+          git describe | xargs -t -r -l gh release create
         env:
           GH_TOKEN: ${{ github.token }}
