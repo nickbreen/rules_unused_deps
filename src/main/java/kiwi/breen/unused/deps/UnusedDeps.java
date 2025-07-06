@@ -1,11 +1,13 @@
 package kiwi.breen.unused.deps;
 
+import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.devtools.build.lib.view.proto.Deps;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -17,11 +19,17 @@ import java.util.stream.Collectors;
 
 public class UnusedDeps implements Callable<Integer>
 {
-    @Parameter(names = {"-u"})
+    @Parameter(names = {"-u", "--used", "--used-deps"})
     private Path usedDeps;
 
-    @Parameter(names = {"-d"})
+    @Parameter(names = {"-d", "--direct", "--direct-deps"})
     private Path directDeps;
+
+    @Parameter(names = {"-o", "--out", "--output"}, converter = PrintStreamConverter.class)
+    private PrintStream output = System.out;
+
+    @Parameter(names = {"-x", "-e", "--exit"})
+    private boolean exitOnFailures;
 
     public static void main(final String[] args) throws Exception
     {
@@ -40,13 +48,15 @@ public class UnusedDeps implements Callable<Integer>
     @Override
     public Integer call() throws Exception
     {
+        System.err.printf("Direct Deps %s (%s) %n", directDeps, directDeps.toAbsolutePath());
+        System.err.printf("Used Deps %s (%s) %n", usedDeps, usedDeps.toAbsolutePath());
         final Map<String, String> directDeps =
-                Loaders.loadDeclaredDeps(this.directDeps.toString());
+                Loaders.loadDeclaredDeps(this.directDeps);
         final Deps.Dependencies usedDeps =
-                Loaders.loadUsedDeps(this.usedDeps.toString());
+                Loaders.loadUsedDeps(this.usedDeps);
         final Collection<String> unused = detect(usedDeps, directDeps);
-        unused.forEach(System.out::println);
-        return unused.size();
+        unused.forEach(output::println);
+        return exitOnFailures ? unused.size() : 0;
     }
 
     Collection<String> detect(
@@ -64,5 +74,21 @@ public class UnusedDeps implements Callable<Integer>
                 .filter(dependencyWasUsedFilter)
                         .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
+    }
+
+    private static class PrintStreamConverter implements IStringConverter<PrintStream>
+    {
+        @Override
+        public PrintStream convert(final String value)
+        {
+            try
+            {
+                return new PrintStream(Files.newOutputStream(Path.of(value)));
+            }
+            catch (final IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

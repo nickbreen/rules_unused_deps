@@ -10,6 +10,7 @@ java_binary(
         "@@protobuf+//java/core",  # this is just what bazel told me to add
         artifact("org.jcommander:jcommander"),
     ],
+    visibility = ["//visibility:public"],
 )
 
 srcs = glob(["src/test/java/**"])
