@@ -31,11 +31,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - run: |
           set -o pipefail
+          git log
           git describe | xargs -t -r -l gh release create
         env:
           GH_TOKEN: ${{ github.token }}
