@@ -1,6 +1,5 @@
 name: CI
-on: [push]
-
+on: push
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,3 +24,13 @@ jobs:
           then
             exit 1
           fi
+  release:
+    needs: test
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          gh release create "$(git describe)"
