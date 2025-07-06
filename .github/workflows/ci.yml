@@ -34,3 +34,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           gh release create "$(git describe)"
+        env:
+          GH_TOKEN: ${{ github.token }}
