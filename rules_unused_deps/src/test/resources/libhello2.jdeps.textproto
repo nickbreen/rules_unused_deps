@@ -1,7 +1,0 @@
-dependency {
-  path: "bazel-out/k8-fastbuild/bin/external/rules_jvm_external++maven+maven/org/slf4j/slf4j-api/2.0.17/header_slf4j-api-2.0.17.jar"
-  kind: EXPLICIT
-}
-rule_label: "//:hello2"
-success: true
-contained_package: "com.example"
