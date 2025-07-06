@@ -108,11 +108,6 @@ decode_used_deps = aspect(
 
 def _unused_deps(target, ctx):
     outputs = []
-    print(
-        target.label,
-        target[UsedDepsInfo],
-        target[DirectDepsInfo],
-        target[UsedDepsInfo].used_deps and target[DirectDepsInfo].direct_deps)
     if target[UsedDepsInfo].used_deps and target[DirectDepsInfo].direct_deps:
         outputs.append(ctx.actions.declare_file("%s.unused.deps.txt" % ctx.label.name))
         ctx.actions.run(
@@ -127,8 +122,6 @@ def _unused_deps(target, ctx):
                         .add_all("--output", outputs)
             ]
         )
-    else:
-        print("nothing to do")
     return [
         UnusedDepsInfo(unused_deps = outputs)
     ]
