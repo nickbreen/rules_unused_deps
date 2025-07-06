@@ -12,18 +12,16 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeThat;
 
 @RunWith(Parameterized.class)
-public class FixturesSanityTest extends FixturesTestBase
+public class FixturesSanityTest
 {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data()
@@ -45,7 +43,7 @@ public class FixturesSanityTest extends FixturesTestBase
     @Before
     public void setUp() throws IOException
     {
-        dependencies = loadTextFixture(resource);
+        dependencies = Loaders.loadDeclaredDeps(resource);
     }
 
     @Test
@@ -63,7 +61,6 @@ public class FixturesSanityTest extends FixturesTestBase
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void shouldHaveUsedDepSLF4JImplementation()
     {
@@ -86,7 +83,6 @@ public class FixturesSanityTest extends FixturesTestBase
                 ));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void shouldHaveUsedDepSLF4JAPI()
     {

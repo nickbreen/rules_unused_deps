@@ -11,13 +11,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import static kiwi.breen.unused.deps.Loaders.loadUsedDeps;
+import static kiwi.breen.unused.deps.Loaders.loadDeclaredDeps;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.StringContains.containsString;
 
 @RunWith(Parameterized.class)
-public class DetectUnusedDepsTest extends FixturesTestBase
+public class DetectUnusedDepsTest
 {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data()
@@ -52,8 +54,8 @@ public class DetectUnusedDepsTest extends FixturesTestBase
     @Before
     public void setUp() throws Exception
     {
-        directDeps = loadTextFixture(directResource);
-        usedDeps = loadProtoFixture(usedResource);
+        directDeps = loadDeclaredDeps(directResource);
+        usedDeps = loadUsedDeps(usedResource);
     }
 
     @Test

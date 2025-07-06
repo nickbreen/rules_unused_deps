@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static kiwi.breen.unused.deps.Loaders.loadUsedDeps;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Parameterized.class)
-public class ProtoFixturesSanityTest extends FixturesTestBase
+public class ProtoFixturesSanityTest
 {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data()
@@ -41,7 +42,7 @@ public class ProtoFixturesSanityTest extends FixturesTestBase
     @Before
     public void setUp() throws IOException
     {
-        dependencies = loadProtoFixture(resource);
+        dependencies = loadUsedDeps(resource);
     }
 
     @Test
