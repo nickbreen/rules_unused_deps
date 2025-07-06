@@ -36,7 +36,6 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
       - run: |
-          set -o pipefail
-          git describe | xargs -t -r -l gh release create
+          gh release create ${{ github.ref_name }}
         env:
           GH_TOKEN: ${{ github.token }}
