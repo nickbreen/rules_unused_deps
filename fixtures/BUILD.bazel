@@ -1,5 +1,5 @@
 load("@rules_jvm_external//:defs.bzl", "artifact")
-load("//:rules.bzl", "unused_deps")
+load("//:rules.bzl", "unused_deps", "unused_deps_test")
 
 filegroup(
     name = "srcs",
@@ -24,6 +24,11 @@ unused_deps(
     visibility = ["//:__pkg__"],
 )
 
+unused_deps_test(
+    name = "fixture1_unused_deps_test",
+    subject = ":fixture1",
+)
+
 java_binary(
     name = "fixture1_uber",
     main_class = "kiwi.breen.unused.deps.Fixture",
@@ -36,6 +41,11 @@ unused_deps(
     name = "fixture1_uber_unused_deps",
     subject = ":fixture1_uber",
     visibility = ["//:__pkg__"],
+)
+
+unused_deps_test(
+    name = "fixture1_uber_unused_deps_test",
+    subject = ":fixture1_uber",
 )
 
 java_test(
@@ -55,6 +65,11 @@ unused_deps(
     testonly = True,
 )
 
+unused_deps_test(
+    name = "fixture1_test_unused_deps_test",
+    subject = ":fixture1_test",
+)
+
 java_library(
     name = "fixture2",
     srcs = [":srcs"],
@@ -71,6 +86,12 @@ unused_deps(
     visibility = ["//:__pkg__"],
 )
 
+unused_deps_test(
+    name = "fixture2_unused_deps_test",
+    subject = ":fixture2",
+    tags = ["manual"],  # this deliberately fails, so only run it manually if you want to see the failure
+)
+
 java_binary(
     name = "fixture2_uber",
     main_class = "com.example.Hello",
@@ -83,6 +104,11 @@ unused_deps(
     name = "fixture2_uber_unused_deps",
     subject = ":fixture2_uber",
     visibility = ["//:__pkg__"],
+)
+
+unused_deps_test(
+    name = "fixture2_uber_unused_deps_test",
+    subject = ":fixture2_uber",
 )
 
 java_binary(
@@ -100,4 +126,10 @@ unused_deps(
     name = "fixture3_uber_unused_deps",
     subject = ":fixture3_uber",
     visibility = ["//:__pkg__"],
+)
+
+unused_deps_test(
+    name = "fixture3_uber_unused_deps_test",
+    subject = ":fixture3_uber",
+    tags = ["manual"],  # this deliberately fails, so only run it manually if you want to see the failure
 )
