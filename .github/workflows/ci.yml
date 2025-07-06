@@ -32,6 +32,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - run: |
           set -o pipefail
           git describe | xargs -t -r -l gh release create
