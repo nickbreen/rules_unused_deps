@@ -1,25 +1,55 @@
 package kiwi.breen.unused.deps;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.google.devtools.build.lib.view.proto.Deps;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class UnusedDeps
+public class UnusedDeps implements Callable<Integer>
 {
-    public static void main(final String[] args)
+    @Parameter(names = {"-u"})
+    private Path usedDeps;
+
+    @Parameter(names = {"-d"})
+    private Path directDeps;
+
+    public static void main(final String[] args) throws Exception
     {
-        final Deps.Dependencies.Builder builder = Deps.Dependencies.newBuilder();
         final UnusedDeps unusedDeps = new UnusedDeps();
+        JCommander.newBuilder()
+                .addObject(unusedDeps)
+                .build()
+                .parse(args);
+        final int err = unusedDeps.call();
+        System.exit(err);
     }
 
     private static final Predicate<Deps.Dependency> directDependencyFilter =
             dep -> Deps.Dependency.Kind.EXPLICIT.equals(dep.getKind());
 
-    public Collection<String> detect(
+    @Override
+    public Integer call() throws Exception
+    {
+        final Map<String, String> directDeps =
+                Loaders.loadDeclaredDeps(this.directDeps.toString());
+        final Deps.Dependencies usedDeps =
+                Loaders.loadUsedDeps(this.usedDeps.toString());
+        final Collection<String> unused = detect(usedDeps, directDeps);
+        unused.forEach(System.out::println);
+        return unused.size();
+    }
+
+    Collection<String> detect(
             final Deps.Dependencies usedDeps,
             final Map<String, String> directDeps)
     {

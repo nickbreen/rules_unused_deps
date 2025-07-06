@@ -8,6 +8,7 @@ java_binary(
     deps = [
         "@bazel_tools//src/main/protobuf:deps_java_proto",
         "@@protobuf+//java/core",  # this is just what bazel told me to add
+        artifact("org.jcommander:jcommander"),
     ],
 )
 

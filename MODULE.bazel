@@ -14,10 +14,12 @@ maven.install(
         "org.slf4j:slf4j-simple:2.0.17",
         "junit:junit:4.13.2",
         "org.hamcrest:hamcrest:3.0",
+        "org.jcommander:jcommander:2.0",
     ],
     repositories = [
         "https://repo1.maven.org/maven2",
     ],
+    fail_if_repin_required = True,
     fetch_sources = True,
     lock_file = ":rules_jvm_external++maven+maven_install.json",
 )
