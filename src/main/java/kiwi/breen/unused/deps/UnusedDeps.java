@@ -26,6 +26,9 @@ public class UnusedDeps
     @Parameter(names = {"-o", "--out", "--output"}, converter = PrintStreamConverter.class)
     private PrintStream output = System.out;
 
+    @Parameter(names = {"-f", "--format"})
+    private String format = "buildozer 'remove deps %2$s' %1$s";
+
     public static void main(final String[] args) throws Exception
     {
         final UnusedDeps conf = new UnusedDeps();
@@ -38,9 +41,10 @@ public class UnusedDeps
                 Loaders.loadDeclaredDeps(conf.directDeps);
         final Deps.Dependencies usedDeps =
                 Loaders.loadUsedDeps(conf.usedDeps);
-        conf.output.println(usedDeps.getRuleLabel());
         final Collection<String> unused = detect(usedDeps, directDeps);
-        unused.forEach(conf.output::println);
+        unused.stream()
+                .map(u -> String.format(conf.format, usedDeps.getRuleLabel(), u))
+                .forEach(conf.output::println);
     }
 
     private static final Predicate<Deps.Dependency> directDependencyFilter =
@@ -60,7 +64,7 @@ public class UnusedDeps
 
         return directDeps.entrySet().stream()
                 .filter(dependencyWasUsedFilter)
-                        .map(Map.Entry::getKey)
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
     }
 
