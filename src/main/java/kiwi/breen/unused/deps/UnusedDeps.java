@@ -6,18 +6,16 @@ import com.beust.jcommander.Parameter;
 import com.google.devtools.build.lib.view.proto.Deps;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class UnusedDeps implements Callable<Integer>
+public class UnusedDeps
 {
     @Parameter(names = {"-u", "--used", "--used-deps"})
     private Path usedDeps;
@@ -28,38 +26,27 @@ public class UnusedDeps implements Callable<Integer>
     @Parameter(names = {"-o", "--out", "--output"}, converter = PrintStreamConverter.class)
     private PrintStream output = System.out;
 
-    @Parameter(names = {"-x", "-e", "--exit"})
-    private boolean exitOnFailures;
-
     public static void main(final String[] args) throws Exception
     {
-        final UnusedDeps unusedDeps = new UnusedDeps();
+        final UnusedDeps conf = new UnusedDeps();
         JCommander.newBuilder()
-                .addObject(unusedDeps)
+                .addObject(conf)
                 .build()
                 .parse(args);
-        final int err = unusedDeps.call();
-        System.exit(err);
+
+        final Map<String, String> directDeps =
+                Loaders.loadDeclaredDeps(conf.directDeps);
+        final Deps.Dependencies usedDeps =
+                Loaders.loadUsedDeps(conf.usedDeps);
+        conf.output.println(usedDeps.getRuleLabel());
+        final Collection<String> unused = detect(usedDeps, directDeps);
+        unused.forEach(conf.output::println);
     }
 
     private static final Predicate<Deps.Dependency> directDependencyFilter =
             dep -> Deps.Dependency.Kind.EXPLICIT.equals(dep.getKind());
 
-    @Override
-    public Integer call() throws Exception
-    {
-        System.err.printf("Direct Deps %s (%s) %n", directDeps, directDeps.toAbsolutePath());
-        System.err.printf("Used Deps %s (%s) %n", usedDeps, usedDeps.toAbsolutePath());
-        final Map<String, String> directDeps =
-                Loaders.loadDeclaredDeps(this.directDeps);
-        final Deps.Dependencies usedDeps =
-                Loaders.loadUsedDeps(this.usedDeps);
-        final Collection<String> unused = detect(usedDeps, directDeps);
-        unused.forEach(output::println);
-        return exitOnFailures ? unused.size() : 0;
-    }
-
-    Collection<String> detect(
+    static Collection<String> detect(
             final Deps.Dependencies usedDeps,
             final Map<String, String> directDeps)
     {
@@ -70,6 +57,7 @@ public class UnusedDeps implements Callable<Integer>
 
         final Predicate<Map.Entry<String, String>> dependencyWasUsedFilter =
                 e -> !usedDirectDeps.contains(e.getValue());
+
         return directDeps.entrySet().stream()
                 .filter(dependencyWasUsedFilter)
                         .map(Map.Entry::getKey)

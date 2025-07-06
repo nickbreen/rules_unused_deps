@@ -49,7 +49,6 @@ public class DetectUnusedDepsTest
 
     private Map<String, String> directDeps;
     private Deps.Dependencies usedDeps;
-    private final UnusedDeps unusedDeps = new UnusedDeps();
 
     @Before
     public void setUp() throws Exception
@@ -61,7 +60,7 @@ public class DetectUnusedDepsTest
     @Test
     public void shouldDetectNoUnusedDeps()
     {
-        final Collection<String> unusedDeps = this.unusedDeps.detect(usedDeps, directDeps);
+        final Collection<String> unusedDeps = UnusedDeps.detect(usedDeps, directDeps);
         assertThat(unusedDeps, expectedUnusedDeps);
     }
 }
