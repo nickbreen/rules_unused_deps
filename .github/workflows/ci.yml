@@ -25,3 +25,24 @@ jobs:
           then
             exit 1
           fi
+  release:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "tag=0.0.0+${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $tag
+          git push origin $tag
+      - uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.tag }}
+          release_name: Release ${{ env.tag }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
