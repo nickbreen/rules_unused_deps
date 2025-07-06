@@ -24,6 +24,37 @@ unused_deps(
     visibility = ["//:__pkg__"],
 )
 
+java_binary(
+    name = "fixture1_uber",
+    main_class = "kiwi.breen.unused.deps.Fixture",
+    runtime_deps = [
+        ":fixture1",
+    ],
+)
+
+unused_deps(
+    name = "fixture1_uber_unused_deps",
+    subject = ":fixture1_uber",
+    visibility = ["//:__pkg__"],
+)
+
+java_test(
+    name = "fixture1_test",
+    srcs = glob(["src/test/java/**"]),
+    test_class = "kiwi.breen.unused.deps.FixtureTest",
+    deps = [
+        artifact("junit:junit"),
+        ":fixture1",
+    ],
+)
+
+unused_deps(
+    name = "fixture1_test_unused_deps",
+    subject = ":fixture1_test",
+    visibility = ["//:__pkg__"],
+    testonly = True,
+)
+
 java_library(
     name = "fixture2",
     srcs = [":srcs"],
@@ -37,20 +68,6 @@ java_library(
 unused_deps(
     name = "fixture2_unused_deps",
     subject = ":fixture2",
-    visibility = ["//:__pkg__"],
-)
-
-java_binary(
-    name = "fixture1_uber",
-    main_class = "kiwi.breen.unused.deps.Fixture",
-    runtime_deps = [
-        ":fixture1",
-    ],
-)
-
-unused_deps(
-    name = "fixture1_uber_unused_deps",
-    subject = ":fixture1_uber",
     visibility = ["//:__pkg__"],
 )
 
@@ -84,21 +101,3 @@ unused_deps(
     subject = ":fixture3_uber",
     visibility = ["//:__pkg__"],
 )
-
-java_test(
-    name = "fixture1_test",
-    srcs = glob(["src/test/java/**"]),
-    test_class = "kiwi.breen.unused.deps.FixtureTest",
-    deps = [
-        artifact("junit:junit"),
-        ":fixture1",
-    ],
-)
-
-unused_deps(
-    name = "fixture1_test_unused_deps",
-    subject = ":fixture1_test",
-    visibility = ["//:__pkg__"],
-    testonly = True,
-)
-

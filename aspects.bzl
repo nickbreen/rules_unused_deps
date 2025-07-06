@@ -28,7 +28,12 @@ def _unused_deps(target, ctx):
                 ],
             tools = ctx.files._protoc + ctx.files._proto,
         )
-    direct_deps = [jo.compile_jar for d in ctx.rule.attr.deps for jo in d[JavaInfo].java_outputs]
+    direct_deps = [
+        # If there isn't a compile_jar (an ijar) just use the actual jar
+        jo.compile_jar if jo.compile_jar else jo.class_jar
+        for d in ctx.rule.attr.deps
+        for jo in d[JavaInfo].java_outputs
+    ]
     direct_deps_text = []
     if direct_deps:
         out = ctx.actions.declare_file(
