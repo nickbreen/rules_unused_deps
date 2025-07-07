@@ -1,5 +1,7 @@
 Check for unused java dependencies for `java_*` target.
 
+# Usage
+
 ```
 # BUILD.bazel
 load("@rules_unused_deps//:rules.bzl", "unused_deps_test")
@@ -27,4 +29,9 @@ archive_override(
     strip_prefix = "rules_unused_deps-0.0.0",
     integrity = "sha256-/li7/8YRUuOZzwc87cGl4NDsFSKD6cHk0My8RvtYJ6Y=",
 )
+```
+
+Generating the Subresource Integrity value (the bit after `sha256-`):
+```shell
+openssl dgst -sha256 -binary rules_unused_deps-0.0.0.tar.gz | openssl base64 -A
 ```
