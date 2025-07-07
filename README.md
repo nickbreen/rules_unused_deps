@@ -35,3 +35,14 @@ Generating the Subresource Integrity value (the bit after `sha256-`):
 ```shell
 openssl dgst -sha256 -binary rules_unused_deps-0.0.0.tar.gz | openssl base64 -A
 ```
+
+# Air-Gapped Environments
+
+Use [--downloader_config](https://bazel.build/reference/command-line-reference#common_options-flag--downloader_config)
+to rewrite maven central repository URL's to your air-gapped repository.
+
+```
+# downloader.cfg
+rewrite repo1.maven.org/maven2/(.*) https://${YOUR_PROXY_HOST}/${YOUR_PROXY_PATH}/$1
+```
+
