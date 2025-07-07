@@ -47,7 +47,12 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+      - id: integrity
+        run: |
+          echo "sri=sha256-$(curl -sSfL https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz |
+            openssl dgst -sha256 -binary |
+            openssl base64 -A)" >> ${GITHUB_OUTPUT}
       - run: |
-          gh release create ${{ github.ref_name }}
+          gh release create ${{ github.ref_name }} --notes 'SRI: `${{ steps.integrity.outputs.sri }}`'
         env:
           GH_TOKEN: ${{ github.token }}
