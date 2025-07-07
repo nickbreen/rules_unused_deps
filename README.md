@@ -36,6 +36,18 @@ Generating the Subresource Integrity value (the bit after `sha256-`):
 openssl dgst -sha256 -binary rules_unused_deps-0.0.0.tar.gz | openssl base64 -A
 ```
 
+# `rules_java` and `rules_jvm_external` version conflicts
+
+Use [single_version_override](https://bazel.build/rules/lib/globals/module#single_version_override)
+to resolve conflicts between the versions of `rules_java` and `rules_jvm_external`
+that this module uses in the module graph.
+
+```
+# MODULE.bazel
+single_version_override(module_name = "rules_java", version="8.12.0")
+single_version_override(module_name = "rules_jvm_external", version="6.6")
+```
+
 # Air-Gapped Environments
 
 Use [--downloader_config](https://bazel.build/reference/command-line-reference#common_options-flag--downloader_config)
