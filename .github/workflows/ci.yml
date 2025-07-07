@@ -24,6 +24,18 @@ jobs:
           then
             exit 1
           fi
+      - working-directory: acceptance
+        run: |
+          bazel test ...
+          # These two tests fail, deliberately, so fail if they pass 
+          if bazel test //:fixture2_unused_deps_test
+          then
+            exit 1
+          fi
+          if bazel test //:fixture3_uber_unused_deps_test
+          then
+            exit 1
+          fi
   release:
     needs: test
     if: github.ref_type == 'tag'

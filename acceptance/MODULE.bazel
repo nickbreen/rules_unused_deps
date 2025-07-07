@@ -1,0 +1,27 @@
+bazel_dep(name = "rules_unused_deps", version = "0.0.0")
+local_path_override(
+    module_name = "rules_unused_deps",
+    path = "..",
+)
+
+bazel_dep(name = "rules_jvm_external", version = "6.6")
+single_version_override(module_name = "rules_jvm_external", version = "6.6")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+maven.install(
+    artifacts = [
+        "org.slf4j:slf4j-api:2.0.17",
+        "org.slf4j:slf4j-simple:2.0.17",
+        "junit:junit:4.13.2",
+        "org.hamcrest:hamcrest:3.0",
+    ],
+    repositories = [
+        "https://repo1.maven.org/maven2",
+    ],
+    fail_if_repin_required = True,
+    fetch_sources = True,
+    lock_file = ":rules_jvm_external++maven+maven_install.json",
+)
+
+use_repo(maven, "maven")
