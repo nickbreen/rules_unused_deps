@@ -58,7 +58,7 @@ public class DetectUnusedDepsTest
     }
 
     @Test
-    public void shouldDetectNoUnusedDeps()
+    public void shouldDetectUnusedDeps()
     {
         final Collection<String> unusedDeps = UnusedDeps.detect(usedDeps, directDeps);
         assertThat(unusedDeps, expectedUnusedDeps);
