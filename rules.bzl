@@ -1,5 +1,5 @@
-load(":defs.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo", "DecodedUsedDepsInfo")
-load(":aspects.bzl", aspect_unused_deps = "unused_deps", "decode_used_deps")
+load(":defs.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo")
+load(":aspects.bzl", aspect_unused_deps = "unused_deps")
 
 def _unused_deps(ctx):
     return [
@@ -72,27 +72,4 @@ unused_deps_test = rule(
         ),
     },
     test = True
-)
-
-def _decoded_used_deps(ctx):
-    return [
-        DefaultInfo(
-            files = depset(
-                ctx.attr.subject[DecodedUsedDepsInfo].used_deps
-            )
-        )
-    ]
-
-decoded_used_deps = rule(
-    doc = '''
-    Decodes used deps into prototext format.
-    ''',
-    implementation = _decoded_used_deps,
-    attrs = {
-        "subject": attr.label(
-            mandatory = True,
-            providers = [[JavaInfo]],
-            aspects = [aspect_unused_deps, decode_used_deps]
-        ),
-    },
 )

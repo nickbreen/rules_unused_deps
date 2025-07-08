@@ -1,4 +1,4 @@
-load(":defs.bzl", "UsedDepsInfo", "DirectDepsInfo", "DecodedUsedDepsInfo", "UnusedDepsInfo")
+load(":defs.bzl", "UsedDepsInfo", "DirectDepsInfo", "UnusedDepsInfo")
 
 def _direct_deps(target, ctx):
     direct_deps = [
@@ -51,59 +51,6 @@ used_deps = aspect(
     attr_aspects = ['deps'],
     required_providers = [[JavaInfo]],
     provides = [UsedDepsInfo],
-)
-
-def _decode_used_deps(target, ctx):
-    used_deps_text_proto = []
-    for jdeps in target[UsedDepsInfo].used_deps:
-        text_proto = ctx.actions.declare_file(
-            "%s.textproto" % jdeps.basename,
-            sibling = jdeps)
-        used_deps_text_proto.append(text_proto)
-        ctx.actions.run_shell(
-            mnemonic = "JdepsTextProto",
-            inputs = [jdeps],
-            outputs = [text_proto],
-            command = ''' ${1?} --decode=${2?} ${3?} < ${4?} > ${5?} ''',
-            arguments = [
-                ctx.actions.args().
-                    add(ctx.file._protoc).
-                    add(ctx.attr.msg).
-                    add(ctx.file._proto).
-                    add(jdeps).
-                    add(text_proto)
-                ],
-            tools = ctx.files._protoc + ctx.files._proto,
-        )
-    return [
-        DecodedUsedDepsInfo(
-            used_deps = used_deps_text_proto,
-        )
-    ]
-
-decode_used_deps = aspect(
-    implementation = _decode_used_deps,
-    attr_aspects = ['deps'],
-    requires = [used_deps],
-    required_aspect_providers = [UsedDepsInfo],
-    required_providers = [[JavaInfo]],
-    provides = [DecodedUsedDepsInfo],
-    attrs = {
-        "_protoc": attr.label(
-            default = "@bazel_tools//tools/proto:protoc",
-            allow_single_file = True,
-            executable = True,
-            cfg = "exec",
-        ),
-        "_proto": attr.label(
-            default = "@bazel_tools//src/main/protobuf:deps.proto",
-            allow_single_file = True,
-        ),
-        "msg": attr.string(
-            default = "blaze_deps.Dependencies",
-            values = ["blaze_deps.Dependencies"]
-        )
-    },
 )
 
 def _unused_deps(target, ctx):
