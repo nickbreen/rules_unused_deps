@@ -7,10 +7,14 @@ java_binary(
     srcs = glob(["src/main/java/**"]),
     deps = [
         "@bazel_tools//src/main/protobuf:deps_java_proto",
-        "@@protobuf+//java/core",  # this is just what bazel told me to add
         artifact("org.jcommander:jcommander"),
     ],
     visibility = ["//visibility:public"],
+)
+
+unused_deps_test(
+    name = "unused-deps-unused-deps",
+    subject = ":unused-deps",
 )
 
 srcs = glob(["src/test/java/**"])
@@ -37,12 +41,22 @@ java_test(
     deps = deps,
 )
 
+unused_deps_test(
+    name = "unused-deps-used-test-unused-deps",
+    subject = ":unused-deps-used-test",
+)
+
 java_test(
     name = "unused-deps-direct-test",
     test_class = "kiwi.breen.unused.deps.FixturesSanityTest",
     srcs = srcs,
     resources = resources,
     deps = deps,
+)
+
+unused_deps_test(
+    name = "unused-deps-direct-test-unused-deps",
+    subject = ":unused-deps-direct-test",
 )
 
 java_test(
@@ -53,18 +67,6 @@ java_test(
     deps = deps,
 )
 
-unused_deps_test(
-    name = "unused-deps-unused-deps",
-    subject = ":unused-deps",
-)
-unused_deps_test(
-    name = "unused-deps-used-test-unused-deps",
-    subject = ":unused-deps-used-test",
-)
-unused_deps_test(
-    name = "unused-deps-direct-test-unused-deps",
-    subject = ":unused-deps-direct-test",
-)
 unused_deps_test(
     name = "unused-deps-detect-test-unused-deps",
     subject = ":unused-deps-detect-test",
