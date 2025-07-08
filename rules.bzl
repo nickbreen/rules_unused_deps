@@ -1,6 +1,5 @@
 load(":defs.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo", "DecodedUsedDepsInfo")
 load(":aspects.bzl", aspect_unused_deps = "unused_deps", "decode_used_deps")
-load(":transitions.bzl", "allow_implicit_exports")
 
 def _unused_deps(ctx):
     return [
@@ -66,7 +65,6 @@ unused_deps_test = rule(
     Tests that there are zero unused deps.
     ''',
     implementation = _unused_deps_test,
-    cfg = allow_implicit_exports,
     attrs = {
         "subject": attr.label(
             mandatory = True,
