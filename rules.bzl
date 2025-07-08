@@ -7,7 +7,6 @@ def _unused_deps(ctx):
             files = depset(
                 ctx.attr.subject[DirectDepsInfo].direct_deps +
                 ctx.attr.subject[UsedDepsInfo].used_deps +
-                ctx.attr.subject[DecodedUsedDepsInfo].used_deps +
                 ctx.attr.subject[UnusedDepsInfo].unused_deps
             )
         )
@@ -22,7 +21,7 @@ unused_deps = rule(
         "subject": attr.label(
             mandatory = True,
             providers = [[JavaInfo]],
-            aspects = [aspect_unused_deps, decode_used_deps]
+            aspects = [aspect_unused_deps]
         ),
     },
 )
@@ -69,8 +68,31 @@ unused_deps_test = rule(
         "subject": attr.label(
             mandatory = True,
             providers = [[JavaInfo]],
-            aspects = [aspect_unused_deps, decode_used_deps]
+            aspects = [aspect_unused_deps]
         ),
     },
     test = True
+)
+
+def _decoded_used_deps(ctx):
+    return [
+        DefaultInfo(
+            files = depset(
+                ctx.attr.subject[DecodedUsedDepsInfo].used_deps
+            )
+        )
+    ]
+
+decoded_used_deps = rule(
+    doc = '''
+    Decodes used deps into prototext format.
+    ''',
+    implementation = _decoded_used_deps,
+    attrs = {
+        "subject": attr.label(
+            mandatory = True,
+            providers = [[JavaInfo]],
+            aspects = [aspect_unused_deps, decode_used_deps]
+        ),
+    },
 )

@@ -14,7 +14,7 @@ jobs:
           # Share repository cache between workflows.
           repository-cache: true
       - run: |
-          bazel test ...
+          bazel test ... --incompatible_no_implicit_file_export
           # These two tests fail, deliberately, so fail if they pass 
           if bazel test //fixtures:fixture2_unused_deps_test
           then
@@ -26,7 +26,7 @@ jobs:
           fi
       - working-directory: acceptance
         run: |
-          bazel test ...
+          bazel test ... --incompatible_no_implicit_file_export
           # These two tests fail, deliberately, so fail if they pass 
           if bazel test //:fixture2_unused_deps_test
           then

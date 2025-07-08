@@ -29,8 +29,6 @@ public class ProtoFixturesSanityTest
         return Arrays.asList(new Object[][]{
                 {"/fixtures/libfixture1.jdeps"},
                 {"/fixtures/libfixture2.jdeps"},
-                {"/fixtures/libfixture1.jdeps.textproto"},
-                {"/fixtures/libfixture2.jdeps.textproto"},
         });
     }
 
