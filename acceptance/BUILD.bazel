@@ -133,3 +133,29 @@ unused_deps_test(
     subject = ":fixture3_uber",
     tags = ["manual"],  # this deliberately fails, so only run it manually if you want to see the failure
 )
+
+java_library(
+    name = "fixture4",
+    srcs = [":srcs"],
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+        ":support_fixture",
+    ],
+)
+
+unused_deps_test(
+    name = "fixture4_unused_deps_test",
+    subject = ":fixture4",
+    tags = ["manual"],  # this currently fails, remove when implemented
+)
+
+java_library(
+    name = "support_fixture",
+    srcs = glob(["src/support/java/**"]),
+    neverlink = True,
+)
+
+unused_deps_test(
+    name = "support_fixture_unused_deps_test",
+    subject = ":support_fixture",
+)
