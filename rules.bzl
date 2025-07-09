@@ -26,38 +26,28 @@ unused_deps = rule(
     },
 )
 
-test_script = '''#!/bin/bash -eu
-function unused_deps_test()
-{
-  local -i count=0
-  while read -r inc _
-  do
-      count+=$inc
-  done < <(wc -l "$@")
-  if [ $count -gt 0 ]
-  then
-      cat "$@" >&2
-      exit 65
-  fi
-}
-unused_deps_test %s
-'''
-
 def _unused_deps_test(ctx):
     executable = ctx.actions.declare_file(ctx.label.name)
-    ctx.actions.write(
-        executable,
-        test_script % " ".join([f.short_path for f in ctx.attr.subject[UnusedDepsInfo].unused_deps]),
+    ctx.actions.expand_template(
+        template = ctx.file._script,
+        output = executable,
         is_executable = True)
     return [
-            DefaultInfo(
-                executable = executable,
-                runfiles = ctx.runfiles(files = ctx.attr.subject[UnusedDepsInfo].unused_deps)
-            ),
-            OutputGroupInfo(
-                _validation = depset(ctx.attr.subject[UnusedDepsInfo].unused_deps)
+        DefaultInfo(
+            executable = executable,
+            runfiles = ctx.runfiles(files = ctx.attr.subject[UnusedDepsInfo].unused_deps)
+        ),
+        RunEnvironmentInfo(
+            environment = dict(
+                FORMAT = ctx.attr.format,
+                SUBJECT = "%s" % ctx.attr.subject.label,
+                UNUSED_DEPS = " ".join([f.short_path for f in ctx.attr.subject[UnusedDepsInfo].unused_deps]),
             )
-        ]
+        ),
+        OutputGroupInfo(
+            _validation = depset(ctx.attr.subject[UnusedDepsInfo].unused_deps)
+        )
+    ]
 
 unused_deps_test = rule(
     doc = '''
@@ -70,6 +60,14 @@ unused_deps_test = rule(
             providers = [[JavaInfo]],
             aspects = [aspect_unused_deps]
         ),
+        "format": attr.string(
+            doc = '''printf format string for failure reporting.''',
+            default = "buildozer 'remove deps %s' %s\n"
+        ),
+        "_script": attr.label(
+            default = ":test.sh",
+            allow_single_file = True,
+        )
     },
     test = True
 )
