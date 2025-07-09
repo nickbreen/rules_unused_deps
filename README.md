@@ -1,3 +1,5 @@
+[![CI](https://github.com/nickbreen/rules_unused_deps/actions/workflows/ci.yml/badge.svg)](https://github.com/nickbreen/rules_unused_deps/actions/workflows/ci.yml)
+
 Check for unused java dependencies for `java_*` target.
 
 # Usage
