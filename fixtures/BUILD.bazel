@@ -89,7 +89,9 @@ unused_deps(
 unused_deps_test(
     name = "fixture2_unused_deps_test",
     subject = ":fixture2",
-    tags = ["manual"],  # this deliberately fails, so only run it manually if you want to see the failure
+    ignore = [
+        artifact("org.slf4j:slf4j-simple"),
+    ],
 )
 
 java_binary(
@@ -131,5 +133,7 @@ unused_deps(
 unused_deps_test(
     name = "fixture3_uber_unused_deps_test",
     subject = ":fixture3_uber",
-    tags = ["manual"],  # this deliberately fails, so only run it manually if you want to see the failure
+    ignore = [
+        artifact("org.slf4j:slf4j-simple"),
+    ],
 )

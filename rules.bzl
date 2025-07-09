@@ -32,16 +32,29 @@ def _unused_deps_test(ctx):
         template = ctx.file._script,
         output = executable,
         is_executable = True)
+    ignores = ctx.actions.declare_file("%s.ignores.txt" % ctx.label.name)
+    ctx.actions.write(
+        ignores,
+        ctx.actions.args().add_all([
+            str(i.label)  # expand the label to it's canonical bzlmod label
+            for i in ctx.attr.ignore
+        ])
+    )
     return [
         DefaultInfo(
             executable = executable,
-            runfiles = ctx.runfiles(files = ctx.attr.subject[UnusedDepsInfo].unused_deps)
+            runfiles = ctx.runfiles(
+                files = ctx.attr.subject[UnusedDepsInfo].unused_deps + [ignores])
         ),
         RunEnvironmentInfo(
             environment = dict(
                 FORMAT = ctx.attr.format,
                 SUBJECT = "%s" % ctx.attr.subject.label,
-                UNUSED_DEPS = " ".join([f.short_path for f in ctx.attr.subject[UnusedDepsInfo].unused_deps]),
+                UNUSED_DEPS = " ".join([
+                    f.short_path
+                    for f in ctx.attr.subject[UnusedDepsInfo].unused_deps
+                ]),
+                IGNORE = ignores.short_path,
             )
         ),
         OutputGroupInfo(
@@ -60,8 +73,17 @@ unused_deps_test = rule(
             providers = [[JavaInfo]],
             aspects = [aspect_unused_deps]
         ),
+        "ignore": attr.label_list(
+            doc = '''
+            unused dependencies to ignore, the test will not fail for these.
+            ''',
+            default = [],
+            providers = [[JavaInfo]]
+        ),
         "format": attr.string(
-            doc = '''printf format string for failure reporting.''',
+            doc = '''
+            printf format string for failure reporting.
+            ''',
             default = "buildozer 'remove deps %s' %s\n"
         ),
         "_script": attr.label(

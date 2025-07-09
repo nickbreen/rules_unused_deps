@@ -1,15 +1,11 @@
-#!/bin/bash -eu
+#!/bin/bash -xeu
 
-declare -i count=0 inc
-while read -r inc _
+declare -i count=0
+
+while read -r dep
 do
-    count+=$inc
-done < <(wc -l ${UNUSED_DEPS?})
-if [ $count -gt 0 ]
-then
-    cat ${UNUSED_DEPS?} | while read -r dep
-    do
-        printf "${FORMAT?}" $dep ${SUBJECT?}
-    done
-    exit 65
-fi
+    printf "${FORMAT?}" $dep ${SUBJECT?}
+    count+=1
+done < <(grep --invert-match --line-regexp --fixed-strings --file=${IGNORE?} ${UNUSED_DEPS?})
+
+test $count = 0
