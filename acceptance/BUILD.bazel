@@ -165,3 +165,32 @@ unused_deps_test(
     name = "support_fixture_unused_deps_test",
     subject = ":support_fixture",
 )
+
+java_library(
+    name = "fixture5",
+    srcs = [":srcs"],
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+        ":support_fixture5a",
+        ":support_fixture5b",
+    ],
+)
+
+unused_deps_test(
+    name = "fixture5_unused_deps_test",
+    subject = ":fixture5",
+    ignore = [
+        ":support_fixture5a",
+        ":support_fixture5b",
+    ],
+)
+
+java_library(
+    name = "support_fixture5a",
+    srcs = glob(["src/support/java/**"]),
+)
+
+java_library(
+    name = "support_fixture5b",
+    srcs = glob(["src/support/java/**"]),
+)
