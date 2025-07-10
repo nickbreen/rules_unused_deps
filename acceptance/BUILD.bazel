@@ -89,9 +89,7 @@ unused_deps(
 unused_deps_test(
     name = "fixture2_unused_deps_test",
     subject = ":fixture2",
-    ignore = [
-        artifact("org.slf4j:slf4j-simple"),
-    ],
+    tags = ["expect-failure"],
 )
 
 java_binary(
@@ -133,9 +131,7 @@ unused_deps(
 unused_deps_test(
     name = "fixture3_uber_unused_deps_test",
     subject = ":fixture3_uber",
-    ignore = [
-        artifact("org.slf4j:slf4j-simple"),
-    ],
+    tags = ["expect-failure"],
 )
 
 java_library(
@@ -150,9 +146,7 @@ java_library(
 unused_deps_test(
     name = "fixture4_unused_deps_test",
     subject = ":fixture4",
-    ignore = [
-        ":support_fixture",
-    ],
+    tags = ["expect-failure"],
 )
 
 java_library(
@@ -179,10 +173,7 @@ java_library(
 unused_deps_test(
     name = "fixture5_unused_deps_test",
     subject = ":fixture5",
-    ignore = [
-        ":support_fixture5a",
-        ":support_fixture5b",
-    ],
+    tags = ["expect-failure"],
 )
 
 java_library(

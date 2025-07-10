@@ -5,6 +5,21 @@ Check for unused java dependencies for `java_*` target.
 # Usage
 
 ```
+# MODULE.bazel
+bazel_dep(name = "rules_unused_deps", version = "0.0.0")
+# This is not published to the BCR, so use an archive_override.
+archive_override(
+    module_name = "rules_unused_deps",
+    urls = [
+        "https://github.com/nickbreen/rules_unused_deps/archive/refs/tags/v0.0.0.tar.gz",
+    ],
+    strip_prefix = "rules_unused_deps-0.0.0",
+    integrity = "sha256-/li7/8YRUuOZzwc87cGl4NDsFSKD6cHk0My8RvtYJ6Y=",
+)
+```
+
+Use the `unused_deps_test` rule on any `java_*` target.
+```
 # BUILD.bazel
 load("@rules_unused_deps//:rules.bzl", "unused_deps_test")
 
@@ -19,17 +34,28 @@ unused_deps_test(
 )
 ```
 
+One can also ignore failures for some unused dependencies, which
+is useful for applying to existing code bases or strange edge cases.
+
 ```
-# MODULE.bazel
-bazel_dep(name = "rules_unused_deps", version = "0.0.0")
-# This is not published to the BCR, so use an archive_override.
-archive_override(
-    module_name = "rules_unused_deps",
-    urls = [
-        "https://github.com/nickbreen/rules_unused_deps/archive/refs/tags/v0.0.0.tar.gz",
+unused_deps_test(
+    name = "example_unused_deps",
+    subject = ":example",
+    ignore = [
+        "//some:dep"
     ],
-    strip_prefix = "rules_unused_deps-0.0.0",
-    integrity = "sha256-/li7/8YRUuOZzwc87cGl4NDsFSKD6cHk0My8RvtYJ6Y=",
+)
+```
+
+By default, the output format of the test rule are `buildozer` commands.
+Change this with the `format` attribute. It is a `printf` format string.
+See [man 1 printf](https://www.man7.org/linux/man-pages/man1/printf.1.html).
+
+```
+unused_deps_test(
+    name = "example_unused_deps",
+    subject = ":example",
+    format = "%s\t%s\n",  # output tab-separated-values
 )
 ```
 
