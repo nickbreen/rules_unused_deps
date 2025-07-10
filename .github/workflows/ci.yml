@@ -14,11 +14,11 @@ jobs:
           # Share repository cache between workflows.
           repository-cache: true
       - run: |
-          bazel test ... --incompatible_no_implicit_file_export --keep_going
+          bazel test ... --incompatible_no_implicit_file_export --test_keep_going
       - working-directory: acceptance
         run: |
-          bazel test ... --test_tag_filters=-expect-failure
-          ! bazel test ... --test_tag_filters=expect-failure --keep_going
+          bazel test ... --test_tag_filters=-expect-failure --test_keep_going &&
+            ! bazel test ... --test_tag_filters=expect-failure --test_keep_going
   release:
     needs: test
     if: github.ref_type == 'tag'
