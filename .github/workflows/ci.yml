@@ -10,11 +10,12 @@ jobs:
           - "7.*"
           - "8.*"
           - "rolling"
+    env:
+      USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
     steps:
       - uses: actions/checkout@v2
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          bazel-version: ${{ matrix.bazel-version }}
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
