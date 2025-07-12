@@ -1,4 +1,4 @@
-load(":defs.bzl", "UsedDepsInfo", "DirectDepsInfo", "UnusedDepsInfo")
+load(":providers.bzl", "UsedDepsInfo", "DirectDepsInfo", "UnusedDepsInfo")
 
 def _direct_deps(target, ctx):
     direct_deps = [

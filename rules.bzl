@@ -1,4 +1,4 @@
-load(":defs.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo")
+load(":providers.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo")
 load(":aspects.bzl", aspect_unused_deps = "unused_deps")
 
 def _unused_deps(ctx):
