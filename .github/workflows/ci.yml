@@ -3,15 +3,20 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bazel-version:
+          - "6.*"
+          - "7.*"
+          - "8.*"
+          - "rolling"
     steps:
       - uses: actions/checkout@v2
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          # Avoid downloading Bazel every time.
+          bazel-version: ${{ matrix.bazel-version }}
           bazelisk-cache: true
-          # Store build cache per workflow.
           disk-cache: ${{ github.workflow }}
-          # Share repository cache between workflows.
           repository-cache: true
       - run: |
           bazel test ... --incompatible_no_implicit_file_export --test_keep_going
