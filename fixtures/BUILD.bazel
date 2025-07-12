@@ -1,3 +1,4 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
 load("//:defs.bzl", "artifact")
 load("//:rules.bzl", "unused_deps", "unused_deps_test")
 
