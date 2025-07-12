@@ -1,3 +1,4 @@
+common --enable_bzlmod
 test --test_output=errors
 common --show_result=100
 common --java_runtime_version=21 --java_language_version=11
