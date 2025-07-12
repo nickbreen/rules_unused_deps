@@ -22,9 +22,7 @@ maven.install(
     repositories = [
         "https://repo1.maven.org/maven2",
     ],
-    fail_if_repin_required = True,
     fetch_sources = True,
-    lock_file = ":rules_jvm_external++maven+maven_install.json",
 )
 
 use_repo(maven, "rules_unused_deps_maven")
