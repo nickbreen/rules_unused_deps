@@ -1,3 +1,4 @@
+load("@rules_java//java:defs.bzl", "JavaInfo")
 load(":providers.bzl", "UsedDepsInfo", "DirectDepsInfo", "UnusedDepsInfo")
 
 def _direct_deps(target, ctx):

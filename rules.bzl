@@ -1,3 +1,4 @@
+load("@rules_java//java:defs.bzl", "JavaInfo")
 load(":providers.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo")
 load(":aspects.bzl", aspect_unused_deps = "unused_deps")
 
