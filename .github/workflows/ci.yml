@@ -1,5 +1,16 @@
 name: CI
-on: push
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,11 +31,14 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - run: |
-          bazel test ... --incompatible_no_implicit_file_export --test_keep_going
-      - working-directory: acceptance
+          bazel test ...
+          bazel test ... --incompatible_no_implicit_file_export
+      - working-directory: e2e/smoke
         run: |
-          bazel test ... --test_tag_filters=-expect-failure --test_keep_going &&
-            ! bazel test ... --test_tag_filters=expect-failure --test_keep_going
+          bazel test ...
+          bazel test --test_output errors binary-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
+          bazel test --test_output errors library-with-two-unused-compile-time-deps-unused-deps-test | grep 'remove deps'
+          bazel test --test_output errors library-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
   release:
     needs: test
     if: github.ref_type == 'tag'

@@ -1,0 +1,119 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
+load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@rules_unused_deps//:rules.bzl", "unused_deps_test")
+
+java_library(
+    name = "library-with-proper-compile-time-and-run-time-deps",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+    ],
+    runtime_deps = [
+        # this is in the right place, it is unused at compile time and is in runtime_deps
+        artifact("org.slf4j:slf4j-simple"),
+    ],
+)
+
+unused_deps_test(
+    name = "library-with-proper-compile-time-and-run-time-deps-unused-deps-test",
+    subject = ":library-with-proper-compile-time-and-run-time-deps",
+)
+
+java_binary(
+    name = "binary-with-proper-runtime-dep",
+    main_class = "example.E2ESmoke",
+    runtime_deps = [
+        ":library-with-proper-compile-time-and-run-time-deps",
+    ],
+)
+
+unused_deps_test(
+    name = "binary-with-proper-runtime-dep-unused-deps-test",
+    subject = ":binary-with-proper-runtime-dep",
+)
+
+java_test(
+    name = "test-with-proper-compile-time-deps",
+    srcs = glob(["src/test/java/**"]),
+    test_class = "example.E2ESmokeTest",
+    deps = [
+        artifact("junit:junit"),
+        ":library-with-proper-compile-time-and-run-time-deps",
+    ],
+)
+
+unused_deps_test(
+    name = "test-with-proper-compile-time-deps-unused-deps-test",
+    subject = ":test-with-proper-compile-time-deps",
+)
+
+java_library(
+    name = "library-with-unused-compile-time-dep",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+        # this is in the wrong place, it is unused at compile time and should be in runtime_deps
+        artifact("org.slf4j:slf4j-simple"),
+    ],
+)
+
+unused_deps_test(
+    name = "library-with-unused-compile-time-dep-unused-deps-test",
+    subject = ":library-with-unused-compile-time-dep",
+    tags = ["manual"],
+)
+
+java_binary(
+    name = "binary-with-unused-compile-time-dep",
+    main_class = "example.E2ESmoke",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+        # this is in the wrong place, it is unused at compile time and should be in runtime_deps
+        artifact("org.slf4j:slf4j-simple"),
+    ],
+)
+
+unused_deps_test(
+    name = "binary-with-unused-compile-time-dep-unused-deps-test",
+    subject = ":binary-with-unused-compile-time-dep",
+    tags = ["manual"],
+)
+
+java_library(
+    name = "library-with-no-deps-1",
+    srcs = glob(["src/support/java/**"]),
+    neverlink = True,
+)
+
+unused_deps_test(
+    name = "library-with-no-deps-1-unused_deps_test",
+    subject = ":library-with-no-deps-1",
+)
+
+java_library(
+    name = "library-with-no-deps-2",
+    srcs = glob(["src/support/java/**"]),
+    neverlink = False,
+)
+
+unused_deps_test(
+    name = "library-with-no-deps-2-unused_deps_test",
+    subject = ":library-with-no-deps-2",
+)
+
+java_library(
+    name = "library-with-two-unused-compile-time-deps",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        artifact("org.slf4j:slf4j-api"),
+        ":library-with-no-deps-1",
+        ":library-with-no-deps-2",
+    ],
+)
+
+unused_deps_test(
+    name = "library-with-two-unused-compile-time-deps-unused-deps-test",
+    subject = ":library-with-two-unused-compile-time-deps",
+    tags = ["manual"],
+)

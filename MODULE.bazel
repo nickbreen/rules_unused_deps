@@ -1,6 +1,5 @@
 module(
     name = "rules_unused_deps",
-    version = "0.0.0",
     compatibility_level = 1,
 )
 

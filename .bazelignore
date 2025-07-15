@@ -1,1 +1,4 @@
-acceptance/
+e2e/
+.idea/
+.bazelbsp/
+.github/

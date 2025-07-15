@@ -1,16 +1,16 @@
-package kiwi.breen.unused.deps;
+package example;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class FixtureTest
+public class E2ESmokeTest
 {
     @Test
     public void shouldHello()
     {
-        final Fixture object = new Fixture();
+        final E2ESmoke object = new E2ESmoke();
         assertNotNull("a fake test", object);
         assertTrue("a fake test", true);
     }
