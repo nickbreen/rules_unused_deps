@@ -25,3 +25,5 @@ maven.install(
 )
 
 use_repo(maven, "rules_unused_deps_maven")
+
+register_toolchains("//:all")
