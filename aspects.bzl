@@ -30,7 +30,6 @@ def _direct_deps(target, ctx):
 
 direct_deps = aspect(
     implementation = _direct_deps,
-    attr_aspects = ['deps'],
     required_providers = [[JavaInfo]],
     provides = [DirectDepsInfo],
 )
@@ -49,7 +48,6 @@ def _used_deps(target, ctx):
 
 used_deps = aspect(
     implementation = _used_deps,
-    attr_aspects = ['deps'],
     required_providers = [[JavaInfo]],
     provides = [UsedDepsInfo],
 )
@@ -76,7 +74,6 @@ def _unused_deps(target, ctx):
 
 unused_deps = aspect(
     implementation = _unused_deps,
-    attr_aspects = ['deps'],
     requires = [used_deps, direct_deps],
     required_aspect_providers = [UsedDepsInfo, DirectDepsInfo],
     required_providers = [[JavaInfo]],
