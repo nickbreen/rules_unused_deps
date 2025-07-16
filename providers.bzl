@@ -7,4 +7,3 @@ DirectDepsInfo = provider(fields = {
 UnusedDepsInfo = provider(fields = {
     "unused_deps": "a text file with (by default) buildozer commands to remove unused deps"
 })
-UnusedDepsToolchainInfo = provider("exec")
