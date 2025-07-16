@@ -1,5 +1,5 @@
 load("@rules_java//java:defs.bzl", "JavaInfo")
-load(":providers.bzl", "UsedDepsInfo", "DirectDepsInfo", "UnusedDepsInfo")
+load(":providers.bzl", "UsedDepsInfo", "DirectDepsInfo", "UnusedDepsInfo", "UnusedDepsToolchainInfo")
 
 def _direct_deps(target, ctx):
     direct_deps = [
@@ -53,14 +53,17 @@ used_deps = aspect(
 )
 
 def _unused_deps(target, ctx):
+    toolchain = ctx.toolchains["//:toolchain_type"].unused_deps
     outputs = []
     if target[UsedDepsInfo].used_deps and target[DirectDepsInfo].direct_deps:
         outputs.append(ctx.actions.declare_file("%s.unused.deps.txt" % ctx.label.name))
         ctx.actions.run(
             mnemonic = "UnusedDeps",
-            executable = ctx.executable._tool,
+            executable = toolchain.exec.files_to_run.executable,
             inputs = target[UsedDepsInfo].used_deps + target[DirectDepsInfo].direct_deps,
             outputs = outputs,
+            toolchain = "//:toolchain_type",
+            tools = [toolchain.exec.files_to_run],
             arguments = [
                 ctx.actions.args()
                         .add_all("--used-deps", target[UsedDepsInfo].used_deps)
@@ -78,11 +81,5 @@ unused_deps = aspect(
     required_aspect_providers = [UsedDepsInfo, DirectDepsInfo],
     required_providers = [[JavaInfo]],
     provides = [UnusedDepsInfo],
-    attrs = {
-        "_tool": attr.label(
-            default = "//:unused-deps",
-            executable = True,
-            cfg = "exec",
-        ),
-    },
+    toolchains = ["//:toolchain_type"],
 )

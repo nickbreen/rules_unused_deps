@@ -1,6 +1,21 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
 load("//:defs.bzl", "artifact")
 load(":rules.bzl", "unused_deps_test")
+load(":toolchains.bzl", "unused_deps_toolchain")
+
+toolchain_type(name = "toolchain_type")
+
+toolchain(
+    name = "toolchain",
+    toolchain_type = ":toolchain_type",
+    toolchain = ":java_toolchain",
+)
+
+unused_deps_toolchain(
+    name = "java_toolchain",
+    exec = ":unused-deps",
+    visibility = ["//visibility:public"],
+)
 
 java_binary(
     name = "unused-deps",
@@ -10,7 +25,6 @@ java_binary(
         "@bazel_tools//src/main/protobuf:deps_java_proto",
         artifact("org.jcommander:jcommander"),
     ],
-    visibility = ["//visibility:public"],
 )
 
 unused_deps_test(
