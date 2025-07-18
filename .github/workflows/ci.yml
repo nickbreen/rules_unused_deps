@@ -42,10 +42,9 @@ jobs:
       - id: binary
         run: |
           bazel build :unused-deps_deploy.jar
-          echo "bin=$(bazel cquery --output files :unused-deps_deploy.jar)" >> ${GITHUB_OUTPUT}
-      - id: binary-integrity
-        run: |
-          read -r bin_sri < <(openssl dgst -sha256 -binary < ${{ steps.binary.outputs.bin }} | openssl base64 -A)
+          bin=$(bazel cquery --output files :unused-deps_deploy.jar)
+          echo "bin=$bin" >> ${GITHUB_OUTPUT}
+          read -r bin_sri < <(openssl dgst -sha256 -binary < $bin | openssl base64 -A)
           echo "bin_sri=sha256-${bin_sri?}" >> ${GITHUB_OUTPUT}
   release:
     needs: test
