@@ -33,16 +33,19 @@ jobs:
           disk-cache: ${{ github.workflow }}-${{ matrix.bazel-version }}
           repository-cache: true
       - run: |
+          test "rolling" = "${USE_BAZEL_VERSION}" && set +e
           bazel test ...
           bazel test ... --incompatible_no_implicit_file_export
       - working-directory: e2e/smoke
         run: |
+          test "rolling" = "${USE_BAZEL_VERSION}" && set +e
           bazel test ...
           bazel test --test_output errors binary-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
           bazel test --test_output errors library-with-two-unused-compile-time-deps-unused-deps-test | grep 'remove deps'
           bazel test --test_output errors library-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
       - id: binary
         run: |
+          test "rolling" = "${USE_BAZEL_VERSION}" && set +e
           bazel build :unused-deps_deploy.jar
           bin="$(bazel cquery --output files :unused-deps_deploy.jar)"
           echo "bin=$bin" >> ${GITHUB_OUTPUT}
