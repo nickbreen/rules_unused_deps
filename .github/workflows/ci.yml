@@ -17,7 +17,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
       fail-fast: false
       matrix:
         bazel-version:
@@ -31,7 +30,7 @@ jobs:
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}
+          disk-cache: ${{ github.workflow }}-${{ matrix.bazel-version }}
           repository-cache: true
       - run: |
           bazel test ...
