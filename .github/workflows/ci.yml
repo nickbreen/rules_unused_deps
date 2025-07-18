@@ -22,6 +22,7 @@ jobs:
         bazel-version:
           - "7.*"
           - "8.*"
+          - "9.0.0-pre.20250706.3"
           - "rolling"
     continue-on-error: ${{ matrix.bazel-version == 'rolling' }}
     env:
