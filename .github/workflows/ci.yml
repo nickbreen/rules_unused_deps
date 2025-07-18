@@ -20,11 +20,16 @@ jobs:
       fail-fast: false
       matrix:
         bazel-version:
+          - "6.*"
           - "7.*"
           - "8.*"
-          - "9.0.0-pre.20250706.3"
           - "rolling"
-    continue-on-error: ${{ matrix.bazel-version == 'rolling' }}
+        include:
+          - bazel-version: "rolling"
+            canfail: "https://github.com/bazelbuild/bazel/issues/26579"
+          - bazel-version: "6.*"
+            canfail: "WORKSPACE support required for 6.*"
+    continue-on-error: ${{ !!matrix.canfail }}
     env:
       USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
     steps:
@@ -46,10 +51,11 @@ jobs:
       - id: binary
         run: |
           bazel build :unused-deps_deploy.jar
-          bin="$(bazel cquery --output files :unused-deps_deploy.jar)"
-          echo "bin=$bin" >> ${GITHUB_OUTPUT}
-          bin_sri="$(openssl dgst -sha256 -binary < $bin | openssl base64 -A)"
-          echo "bin_sri=sha256-${bin_sri?}" >> ${GITHUB_OUTPUT}
+          echo "bin=$(bazel cquery --output files :unused-deps_deploy.jar)" >> ${GITHUB_OUTPUT}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unused-deps-${{ matrix.bazel-version }}
+          path: ${{ steps.binary.outputs.bin }}
   release:
     needs: test
     if: github.ref_type == 'tag'
