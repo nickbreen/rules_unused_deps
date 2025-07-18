@@ -2,21 +2,9 @@
 
 Check for unused java dependencies for `java_*` target.
 
-# Usage
+See [release notes](https://github.com/nickbreen/rules_unused_deps/releases) for installation instructions.
 
-```
-# MODULE.bazel
-bazel_dep(name = "rules_unused_deps", version = "0.0.0")
-# This is not published to the BCR, so use an archive_override.
-archive_override(
-    module_name = "rules_unused_deps",
-    urls = [
-        "https://github.com/nickbreen/rules_unused_deps/archive/refs/tags/v0.0.0.tar.gz",
-    ],
-    strip_prefix = "rules_unused_deps-0.0.0",
-    integrity = "sha256-/li7/8YRUuOZzwc87cGl4NDsFSKD6cHk0My8RvtYJ6Y=",
-)
-```
+# Usage
 
 Use the `unused_deps_test` rule on any `java_*` target.
 ```
@@ -57,11 +45,6 @@ unused_deps_test(
     subject = ":example",
     format = "%s\t%s\n",  # output tab-separated-values
 )
-```
-
-Generating the Subresource Integrity value (the bit after `sha256-`):
-```shell
-openssl dgst -sha256 -binary rules_unused_deps-0.0.0.tar.gz | openssl base64 -A
 ```
 
 # `rules_java` and `rules_jvm_external` version conflicts

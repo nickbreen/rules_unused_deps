@@ -39,6 +39,14 @@ jobs:
           bazel test --test_output errors binary-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
           bazel test --test_output errors library-with-two-unused-compile-time-deps-unused-deps-test | grep 'remove deps'
           bazel test --test_output errors library-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
+      - id: binary
+        run: |
+          bazel build :unused-deps_deploy.jar
+          echo "bin=$(bazel cquery --output files :unused-deps_deploy.jar)" >> ${GITHUB_OUTPUT}
+      - id: binary-integrity
+        run: |
+          read -r bin_sri < <(openssl dgst -sha256 -binary < ${{ steps.binary.outputs.bin }} | openssl base64 -A)
+          echo "bin_sri=sha256-${bin_sri?}" >> ${GITHUB_OUTPUT}
   release:
     needs: test
     if: github.ref_type == 'tag'
@@ -52,10 +60,12 @@ jobs:
           fetch-tags: true
       - id: integrity
         run: |
-          echo "sri=sha256-$(curl -sSfL https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz |
+          read -r sri < <(curl -sSfL ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz |
             openssl dgst -sha256 -binary |
-            openssl base64 -A)" >> ${GITHUB_OUTPUT}
+            openssl base64 -A)
+          echo "sri=sha256-${sri}" >> ${GITHUB_OUTPUT}
+          echo "ver=${GITHUB_REF_NAME#v}" >> ${GITHUB_OUTPUT}
       - run: |
-          gh release create ${{ github.ref_name }} --notes 'SRI: `${{ steps.integrity.outputs.sri }}`'
+          gh release create ${{ github.ref_name }} -F <(envsubst < NOTES.md)
         env:
           GH_TOKEN: ${{ github.token }}
