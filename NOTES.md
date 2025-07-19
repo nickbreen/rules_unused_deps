@@ -15,7 +15,12 @@ archive_override(
 register_toolchains("@rules_unused_deps//:all")
 ```
 
-Alternatively you can define your own toolchain and use the released JAR of the tool.
+Alternatively you can define your own toolchain and use the released JAR of the tool. **If you do not have a working
+C++ toolchain available on your system, you must use this approach**.
+
+This avoids having to build the toolchain which depends on `@bazel_tools//src/main/protobuf/...`
+which suffers from `protoc`'s [extreme sensitivity](https://github.com/protocolbuffers/protobuf/issues/19558) 
+to being cache-invalidated and rebuilt. 
 
 ```
 # MODULE.bazel
@@ -44,7 +49,6 @@ toolchain(
 unused_deps_toolchain(
     name = "unused-deps-java-toolchain",
     exec = ":unused-deps-java",
-    visibility = ["//visibility:public"],
 )
 
 java_binary(
@@ -52,5 +56,4 @@ java_binary(
     main_class = "kiwi.breen.unused.deps.UnusedDeps",
     runtime_deps = ["@unused-deps//jar"],
 )
-
 ```

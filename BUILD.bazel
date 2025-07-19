@@ -3,7 +3,10 @@ load("//:defs.bzl", "artifact")
 load(":rules.bzl", "unused_deps_test")
 load(":toolchains.bzl", "unused_deps_toolchain")
 
-toolchain_type(name = "toolchain_type")
+toolchain_type(
+    name = "toolchain_type",
+    visibility = ["//visibility:public"],
+)
 
 toolchain(
     name = "toolchain",
