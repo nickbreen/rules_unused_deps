@@ -27,6 +27,8 @@ jobs:
         include:
           - bazel-version: "rolling"
             canfail: "https://github.com/bazelbuild/bazel/issues/26579"
+          - bazel-version: "7.*"
+            artifact: "unused-deps"
           - bazel-version: "6.*"
             canfail: "WORKSPACE support required for 6.*"
     continue-on-error: ${{ !!matrix.canfail }}
@@ -53,8 +55,9 @@ jobs:
           bazel build :unused-deps_deploy.jar
           echo "bin=$(bazel cquery --output files :unused-deps_deploy.jar)" >> ${GITHUB_OUTPUT}
       - uses: actions/upload-artifact@v4
+        if: !!matrix.artifact
         with:
-          name: unused-deps-${{ matrix.bazel-version }}
+          name: ${{ matrix.artifact }}
           path: ${{ steps.binary.outputs.bin }}
   release:
     needs: test
@@ -64,14 +67,18 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
       - id: integrity
         run: |
+          echo "ver=${GITHUB_REF_NAME#v}" >> ${GITHUB_ENV}
           sri="$(curl -sSfL ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz |
               openssl dgst -sha256 -binary |
               openssl base64 -A)"
           echo "sri=sha256-${sri}" >> ${GITHUB_ENV}
-          echo "ver=${GITHUB_REF_NAME#v}" >> ${GITHUB_ENV}
+          bin_sri="$(openssl dgst -sha256 -binary < ${{ steps.binary.outputs.bin }} |
+              openssl base64 -A)"
+          echo "bin_sri=sha256-${bin_sri}" >> ${GITHUB_ENV}
       - run: |
-          gh release create ${GITHUB_REF_NAME} -F <(envsubst < NOTES.md)
+          gh release create ${GITHUB_REF_NAME} -F <(envsubst < NOTES.md) ${{ steps.binary.outputs.bin }}
         env:
           GH_TOKEN: ${{ github.token }}
