@@ -69,20 +69,17 @@ jobs:
       - uses: actions/checkout@v4
       - id: artifact
         uses: actions/download-artifact@v4
-        with:
-          path: artifacts
       - id: integrity
         run: |
-          find ${{ steps.artifact.outputs.download-path }} -ls
           echo "ver=${GITHUB_REF_NAME#v}" >> ${GITHUB_ENV}
           sri="$(curl -sSfL ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz |
               openssl dgst -sha256 -binary |
               openssl base64 -A)"
           echo "sri=sha256-${sri}" >> ${GITHUB_ENV}
-          bin_sri="$(openssl dgst -sha256 -binary < ${{ steps.artifact.outputs.download-path }}/* |
+          bin_sri="$(openssl dgst -sha256 -binary < ${{ steps.artifact.outputs.download-path }}/unused-deps/unused-deps_deploy.jar |
               openssl base64 -A)"
           echo "bin_sri=sha256-${bin_sri}" >> ${GITHUB_ENV}
       - run: |
-          gh release create ${GITHUB_REF_NAME} -F <(envsubst < NOTES.md) ${{ steps.artifact.outputs.download-path }}/*
+          gh release create ${GITHUB_REF_NAME} -F <(envsubst < NOTES.md) ${{ steps.artifact.outputs.download-path }}/unused-deps/unused-deps_deploy.jar
         env:
           GH_TOKEN: ${{ github.token }}
