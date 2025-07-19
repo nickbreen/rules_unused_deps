@@ -15,11 +15,13 @@ archive_override(
 register_toolchains("@rules_unused_deps//:all")
 ```
 
-Alternatively you can define your own toolchain and use the released JAR of the tool. **If you do not have a working
-C++ toolchain available on your system, you must use this approach**.
+Alternatively you can define your own toolchain and use the released JAR of the
+tool. **If you do not have a working C++ toolchain available on your system,
+you must use this approach**, at least until [a pre-built protoc binary](https://github.com/protocolbuffers/protobuf/issues/19558)
+is used.
 
 This avoids having to build the toolchain which depends on `@bazel_tools//src/main/protobuf/...`
-which suffers from `protoc`'s [extreme sensitivity](https://github.com/protocolbuffers/protobuf/issues/19558) 
+which suffers from `protoc`'s [recompilation sensitivity](https://github.com/bazelbuild/bazel/issues/7095)
 to being cache-invalidated and rebuilt. 
 
 ```
@@ -32,9 +34,6 @@ http_jar(
 )
 register_toolchains("//tools:unused-deps-toolchain")
 ```
-
-The location of `tools/BUILD.bazel` is entirely arbitrary in this example:
-
 ```
 # tools/BUILD.bazel
 load("@rules_unused_deps//:toolchains.bzl", "unused_deps_toolchain")
