@@ -1,5 +1,4 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
-load("//:defs.bzl", "artifact")
 load(":rules.bzl", "unused_deps_test")
 load(":toolchains.bzl", "unused_deps_toolchain")
 
@@ -26,7 +25,7 @@ java_binary(
     srcs = glob(["src/main/java/**"]),
     deps = [
         "@bazel_tools//src/main/protobuf:deps_java_proto",
-        artifact("org.jcommander:jcommander"),
+        "@rules_unused_deps_maven//:org_jcommander_jcommander",
     ],
 )
 
@@ -47,8 +46,8 @@ resources = [
 deps = [
     ":unused-deps",
     "@bazel_tools//src/main/protobuf:deps_java_proto",
-    artifact("junit:junit"),
-    artifact("org.hamcrest:hamcrest"),
+    "@rules_unused_deps_maven//:junit_junit",
+    "@rules_unused_deps_maven//:org_hamcrest_hamcrest",
 ]
 
 java_test(

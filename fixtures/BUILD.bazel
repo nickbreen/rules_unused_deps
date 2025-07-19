@@ -1,5 +1,4 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
-load("//:defs.bzl", "artifact")
 load("//:rules.bzl", "unused_deps")
 
 filegroup(
@@ -11,11 +10,11 @@ java_library(
     name = "fixture1",
     srcs = [":srcs"],
     deps = [
-        artifact("org.slf4j:slf4j-api"),
+        "@rules_unused_deps_maven//:org_slf4j_slf4j_api",
     ],
     runtime_deps = [
         # this is in the right place, it is unused at compile time and is in runtime_deps
-        artifact("org.slf4j:slf4j-simple"),
+        "@rules_unused_deps_maven//:org_slf4j_slf4j_simple",
     ],
 )
 
@@ -44,7 +43,7 @@ java_test(
     srcs = glob(["src/test/java/**"]),
     test_class = "kiwi.breen.unused.deps.FixtureTest",
     deps = [
-        artifact("junit:junit"),
+        "@rules_unused_deps_maven//:junit_junit",
         ":fixture1",
     ],
 )
@@ -60,9 +59,9 @@ java_library(
     name = "fixture2",
     srcs = [":srcs"],
     deps = [
-        artifact("org.slf4j:slf4j-api"),
+        "@rules_unused_deps_maven//:org_slf4j_slf4j_api",
         # this is in the wrong place, it is unused at compile time and should be in runtime_deps
-        artifact("org.slf4j:slf4j-simple"),
+        "@rules_unused_deps_maven//:org_slf4j_slf4j_simple",
     ],
 )
 
@@ -91,9 +90,9 @@ java_binary(
     main_class = "kiwi.breen.unused.deps.Fixture",
     srcs = [":srcs"],
     deps = [
-        artifact("org.slf4j:slf4j-api"),
+        "@rules_unused_deps_maven//:org_slf4j_slf4j_api",
         # this is in the wrong place, it is unused at compile time and should be in runtime_deps
-        artifact("org.slf4j:slf4j-simple"),
+        "@rules_unused_deps_maven//:org_slf4j_slf4j_simple",
     ],
 )
 
