@@ -55,7 +55,7 @@ jobs:
           bazel build :unused-deps_deploy.jar
           echo "bin=$(bazel cquery --output files :unused-deps_deploy.jar)" >> ${GITHUB_OUTPUT}
       - uses: actions/upload-artifact@v4
-        if: !!matrix.artifact
+        if: ${{ !!matrix.artifact }}
         with:
           name: ${{ matrix.artifact }}
           path: ${{ steps.binary.outputs.bin }}
