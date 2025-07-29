@@ -1,6 +1,4 @@
 load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
-load("@protobuf//bazel:proto_library.bzl", "proto_library")
-load("@protobuf//bazel:java_proto_library.bzl", "java_proto_library")
 load(":rules.bzl", "unused_deps_test")
 load(":toolchains.bzl", "unused_deps_toolchain")
 
@@ -21,22 +19,12 @@ unused_deps_toolchain(
     visibility = ["//visibility:public"],
 )
 
-proto_library(
-    name = "deps_proto",
-    srcs = ["src/main/proto/deps.proto"],
-)
-
-java_proto_library(
-    name = "deps_java_proto",
-    deps = [":deps_proto"],
-)
-
 java_binary(
     name = "unused-deps",
     main_class = "kiwi.breen.unused.deps.UnusedDeps",
     srcs = glob(["src/main/java/**"]),
     deps = [
-        ":deps_java_proto",
+        "@bazel_tools//src/main/protobuf:deps_java_proto",
         "@rules_unused_deps_maven//:org_jcommander_jcommander",
     ],
 )
@@ -57,7 +45,7 @@ resources = [
 ]
 deps = [
     ":unused-deps",
-    ":deps_java_proto",
+    "@bazel_tools//src/main/protobuf:deps_java_proto",
     "@rules_unused_deps_maven//:junit_junit",
     "@rules_unused_deps_maven//:org_hamcrest_hamcrest",
 ]
