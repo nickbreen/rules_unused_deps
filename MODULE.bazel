@@ -27,3 +27,5 @@ maven.install(
 use_repo(maven, "rules_unused_deps_maven")
 
 register_toolchains("//:all")
+
+bazel_dep(name = "protobuf", version = "29.0", repo_name = "com_google_protobuf")
