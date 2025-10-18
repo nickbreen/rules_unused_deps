@@ -26,7 +26,6 @@ jobs:
           - "rolling"
         include:
           - bazel-version: "rolling"
-            canfail: "https://github.com/bazelbuild/bazel/issues/26579"
           - bazel-version: "7.*"
             artifact: "unused-deps"
           - bazel-version: "6.*"
