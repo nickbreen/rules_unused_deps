@@ -3,9 +3,11 @@ module(
     compatibility_level = 1,
 )
 
-bazel_dep(name = "rules_java", version = "8.13.0")
-
-bazel_dep(name = "rules_jvm_external", version = "6.8")
+bazel_dep(name = "rules_java", version = "9.5.0")
+bazel_dep(name = "rules_jvm_external", version = "6.10")
+bazel_dep(name = "protobuf", version = "33.4")
+single_version_override(module_name = "rules_go", version = "0.60.0")
+single_version_override(module_name = "rules_android", version = "0.7.1")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 
@@ -16,8 +18,9 @@ maven.install(
         "org.slf4j:slf4j-simple:2.0.17",
         "junit:junit:4.13.2",
         "org.hamcrest:hamcrest:3.0",
-        "org.jcommander:jcommander:2.0",
+        "org.jcommander:jcommander:3.0",
     ],
+    lock_file = "//:rules_unused_deps_maven_install.json",
     repositories = [
         "https://repo1.maven.org/maven2",
     ],
@@ -25,5 +28,3 @@ maven.install(
 )
 
 use_repo(maven, "rules_unused_deps_maven")
-
-bazel_dep(name = "protobuf", version = "33.4")
