@@ -20,13 +20,13 @@ jobs:
       fail-fast: false
       matrix:
         bazel-version:
-          - "6.*"
+          - "7.*"
           - "8.*"
           - "9.*"
           - "rolling"
         include:
           - bazel-version: "rolling"
-          - bazel-version: "8.*"
+          - bazel-version: "9.*"
             artifact: "unused-deps"
     continue-on-error: ${{ !!matrix.canfail }}
     env:
