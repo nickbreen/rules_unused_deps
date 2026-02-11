@@ -1,2 +1,4 @@
-targets:
-  //...
+directories:
+  .
+  -.idea
+  -.bazelbsp
