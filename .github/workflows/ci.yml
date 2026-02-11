@@ -20,7 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         bazel-version:
-          - "7.*"
           - "8.*"
           - "9.*"
           - "rolling"
