@@ -21,15 +21,13 @@ jobs:
       matrix:
         bazel-version:
           - "6.*"
-          - "7.*"
           - "8.*"
+          - "9.*"
           - "rolling"
         include:
           - bazel-version: "rolling"
-          - bazel-version: "7.*"
+          - bazel-version: "8.*"
             artifact: "unused-deps"
-          - bazel-version: "6.*"
-            canfail: "WORKSPACE support required for 6.*"
     continue-on-error: ${{ !!matrix.canfail }}
     env:
       USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
