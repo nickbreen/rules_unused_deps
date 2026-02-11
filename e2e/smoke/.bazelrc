@@ -2,3 +2,5 @@ test --test_output=errors
 common --show_result=100
 common --java_runtime_version=21 --java_language_version=11
 common --tool_java_runtime_version=21 --tool_java_language_version=11
+common --cxxopt=-std=c++17
+common --host_cxxopt=-std=c++17
