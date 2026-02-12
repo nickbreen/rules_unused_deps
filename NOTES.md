@@ -16,9 +16,10 @@ register_toolchains("@rules_unused_deps//:all")
 ```
 
 Alternatively you can define your own toolchain and use the released JAR of the
-tool. **If you do not have a working C++ toolchain available on your system,
-you must use this approach**, at least until [a pre-built protoc binary](https://github.com/protocolbuffers/protobuf/issues/19558)
-is used.
+tool. **If you do not have a working C++ toolchain available on your system or 
+your C++ toolchain is earlier than c++17 you must use this approach** unless 
+using [a pre-built protoc binary](https://github.com/protocolbuffers/protobuf/issues/19558) or configuring a custom 
+protoc toolchain.
 
 This avoids having to build the toolchain which depends on `@bazel_tools//src/main/protobuf/...`
 which suffers from `protoc`'s [recompilation sensitivity](https://github.com/bazelbuild/bazel/issues/7095)

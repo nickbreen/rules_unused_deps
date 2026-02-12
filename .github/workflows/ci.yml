@@ -25,9 +25,6 @@ jobs:
           - "9.*"
           - "rolling"
         include:
-          - bazel-version: "rolling"
-          - bazel-version: "7.*"
-            canfail: apparently the c++ toolchain is too old
           - bazel-version: "9.*"
             artifact: "unused-deps"
     continue-on-error: ${{ !!matrix.canfail }}
