@@ -20,7 +20,7 @@ rules_proto_toolchains()
 load("@protobuf//bazel:system_python.bzl", "system_python")
 system_python(
     name = "system_python",
-    minimum_python_version = "3.8",
+    minimum_python_version = "3.9",
 )
 
 load("@protobuf//bazel:protobuf_deps.bzl", "protobuf_deps")
