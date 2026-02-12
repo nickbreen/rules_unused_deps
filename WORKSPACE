@@ -1,0 +1,59 @@
+workspace(name = "rules_unused_deps")
+
+load("//:repositories.bzl", "rules_unused_deps_dependencies")
+
+rules_unused_deps_dependencies()
+
+load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
+
+rules_java_dependencies()
+
+rules_java_toolchains()
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
+
+# Initialize protobuf
+load("@protobuf//bazel:system_python.bzl", "system_python")
+system_python(
+    name = "system_python",
+    minimum_python_version = "3.9",
+)
+
+load("@protobuf//bazel:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+
+rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+maven_install(
+    name = "rules_unused_deps_maven",
+    artifacts = [
+        "org.slf4j:slf4j-api:2.0.17",
+        "org.slf4j:slf4j-simple:2.0.17",
+        "junit:junit:4.13.2",
+        "org.hamcrest:hamcrest:3.0",
+        "org.jcommander:jcommander:3.0",
+    ],
+    repositories = [
+        "https://repo1.maven.org/maven2",
+    ],
+    fetch_sources = True,
+    maven_install_json = "//:rules_unused_deps_maven_install.json",
+)
+
+load("@rules_unused_deps_maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()
+
+register_toolchains("@rules_unused_deps//:all")
