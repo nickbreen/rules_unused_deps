@@ -47,6 +47,13 @@ jobs:
           bazel test --test_output errors binary-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
           bazel test --test_output errors library-with-two-unused-compile-time-deps-unused-deps-test | grep 'remove deps'
           bazel test --test_output errors library-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
+      - working-directory: e2e/smoke-workspace
+        if: matrix.bazel-version == '6.*'
+        run: |
+          bazel test ...
+          bazel test --test_output errors binary-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
+          bazel test --test_output errors library-with-two-unused-compile-time-deps-unused-deps-test | grep 'remove deps'
+          bazel test --test_output errors library-with-unused-compile-time-dep-unused-deps-test | grep 'remove deps'
       - id: binary
         run: |
           bazel build :unused-deps_deploy.jar
