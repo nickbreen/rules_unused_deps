@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import static kiwi.breen.unused.deps.Loaders.DEFAULT_LINE_PARSER;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,8 +28,8 @@ public class FixturesSanityTest
     public static Collection<Object[]> data()
     {
         return Arrays.asList(new Object[][]{
-                {"/fixtures/fixture1.txt", 1},
-                {"/fixtures/fixture2.txt", 2},
+                {"/fixtures/fixture1.direct.deps.txt", 1},
+                {"/fixtures/fixture2.direct.deps.txt", 2},
         });
     }
 
@@ -43,7 +44,7 @@ public class FixturesSanityTest
     @Before
     public void setUp() throws IOException
     {
-        dependencies = Loaders.loadDeclaredDeps(resource);
+        dependencies = new Loaders(DEFAULT_LINE_PARSER).loadDeclaredDeps(resource);
     }
 
     @Test

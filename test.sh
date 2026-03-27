@@ -8,4 +8,4 @@ do
     count+=1
 done < <(grep --invert-match --line-regexp --fixed-strings --file=${IGNORE?} ${UNUSED_DEPS?})
 
-test $count = 0
+test $count -eq 0

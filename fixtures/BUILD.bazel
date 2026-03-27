@@ -4,6 +4,7 @@ load("//:rules.bzl", "unused_deps")
 filegroup(
     name = "srcs",
     srcs = glob(["src/main/java/**"]),
+    testonly = True,
 )
 
 java_library(
@@ -16,12 +17,14 @@ java_library(
         # this is in the right place, it is unused at compile time and is in runtime_deps
         "@rules_unused_deps_maven//:org_slf4j_slf4j_simple",
     ],
+    testonly = True,
 )
 
 unused_deps(
     name = "fixture1_unused_deps",
     subject = ":fixture1",
     visibility = ["//:__pkg__"],
+    testonly = True,
 )
 
 java_binary(
@@ -30,12 +33,14 @@ java_binary(
     runtime_deps = [
         ":fixture1",
     ],
+    testonly = True,
 )
 
 unused_deps(
     name = "fixture1_uber_unused_deps",
     subject = ":fixture1_uber",
     visibility = ["//:__pkg__"],
+    testonly = True,
 )
 
 java_test(
@@ -46,6 +51,7 @@ java_test(
         "@rules_unused_deps_maven//:junit_junit",
         ":fixture1",
     ],
+    testonly = True,
 )
 
 unused_deps(
@@ -63,12 +69,14 @@ java_library(
         # this is in the wrong place, it is unused at compile time and should be in runtime_deps
         "@rules_unused_deps_maven//:org_slf4j_slf4j_simple",
     ],
+    testonly = True,
 )
 
 unused_deps(
     name = "fixture2_unused_deps",
     subject = ":fixture2",
     visibility = ["//:__pkg__"],
+    testonly = True,
 )
 
 java_binary(
@@ -77,12 +85,14 @@ java_binary(
     runtime_deps = [
         ":fixture2",
     ],
+    testonly = True,
 )
 
 unused_deps(
     name = "fixture2_uber_unused_deps",
     subject = ":fixture2_uber",
     visibility = ["//:__pkg__"],
+    testonly = True,
 )
 
 java_binary(
@@ -94,10 +104,12 @@ java_binary(
         # this is in the wrong place, it is unused at compile time and should be in runtime_deps
         "@rules_unused_deps_maven//:org_slf4j_slf4j_simple",
     ],
+    testonly = True,
 )
 
 unused_deps(
     name = "fixture3_uber_unused_deps",
     subject = ":fixture3_uber",
     visibility = ["//:__pkg__"],
+    testonly = True,
 )

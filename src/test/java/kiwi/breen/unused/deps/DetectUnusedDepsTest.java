@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import static kiwi.breen.unused.deps.Loaders.DEFAULT_LINE_PARSER;
 import static kiwi.breen.unused.deps.Loaders.loadUsedDeps;
-import static kiwi.breen.unused.deps.Loaders.loadDeclaredDeps;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -26,12 +26,12 @@ public class DetectUnusedDepsTest
     {
         return Arrays.asList(new Object[][]{
                 {
-                        "/fixtures/fixture1.txt",
+                        "/fixtures/fixture1.direct.deps.txt",
                         "/fixtures/libfixture1.jdeps",
                         empty()
                 },
                 {
-                        "/fixtures/fixture2.txt",
+                        "/fixtures/fixture2.direct.deps.txt",
                         "/fixtures/libfixture2.jdeps",
                         contains(
                             containsString(":org_slf4j_slf4j_simple")
@@ -53,7 +53,7 @@ public class DetectUnusedDepsTest
     @Before
     public void setUp() throws Exception
     {
-        directDeps = loadDeclaredDeps(directResource);
+        directDeps = new Loaders(DEFAULT_LINE_PARSER).loadDeclaredDeps(directResource);
         usedDeps = loadUsedDeps(usedResource);
     }
 

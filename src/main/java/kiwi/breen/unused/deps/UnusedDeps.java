@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class UnusedDeps
@@ -22,6 +23,9 @@ public class UnusedDeps
 
     @Parameter(names = {"-d", "--direct", "--direct-deps"})
     private Path directDeps;
+
+    @Parameter(names = {"-p", "--parser", "--line-parser"})
+    private Pattern lineParser = Loaders.DEFAULT_LINE_PARSER;
 
     @Parameter(names = {"-o", "--out", "--output"}, converter = PrintStreamConverter.class)
     private PrintStream output = System.out;
@@ -35,7 +39,7 @@ public class UnusedDeps
                 .parse(args);
 
         final Map<String, String> directDeps =
-                Loaders.loadDeclaredDeps(conf.directDeps);
+                new Loaders(conf.lineParser).loadDeclaredDeps(conf.directDeps);
         final Deps.Dependencies usedDeps =
                 Loaders.loadUsedDeps(conf.usedDeps);
         final Collection<String> unused = detect(usedDeps, directDeps);

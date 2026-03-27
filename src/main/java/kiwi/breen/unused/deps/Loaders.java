@@ -13,11 +13,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public interface Loaders
+class Loaders
 {
-    Pattern LINE_PARSER = Pattern.compile("(.*)\\t(.*)");
+    static final Pattern DEFAULT_LINE_PARSER = Pattern.compile("(.*)\\t(.*)");
+    private final Pattern lineParser;
 
-    static Map<String, String> loadDeclaredDeps(final Path path) throws IOException
+    public Loaders(final Pattern lineParser)
+    {
+        this.lineParser = lineParser;
+    }
+
+    Map<String, String> loadDeclaredDeps(final Path path) throws IOException
     {
         try (final InputStream in = Files.newInputStream(path))
         {
@@ -25,7 +31,7 @@ public interface Loaders
         }
     }
 
-    static Map<String, String> loadDeclaredDeps(final String resource) throws IOException
+    Map<String, String> loadDeclaredDeps(final String resource) throws IOException
     {
         try (final InputStream in = Loaders.class.getResourceAsStream(resource))
         {
@@ -33,13 +39,13 @@ public interface Loaders
         }
     }
 
-    private static Map<String, String> loadDeclaredDeps(final InputStream in) throws IOException
+    private Map<String, String> loadDeclaredDeps(final InputStream in) throws IOException
     {
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in)))
         {
             return reader
                     .lines()
-                    .map(LINE_PARSER::matcher)
+                    .map(lineParser::matcher)
                     .filter(Matcher::matches)
                     .collect(Collectors.toMap(
                             m -> m.group(1),

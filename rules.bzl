@@ -1,14 +1,24 @@
 load("@rules_java//java:defs.bzl", "JavaInfo")
-load(":providers.bzl", "UnusedDepsInfo", "UsedDepsInfo", "DirectDepsInfo")
-load(":aspects.bzl", aspect_unused_deps = "unused_deps")
+load(":providers.bzl", "UnusedDepsInfo")
+load(":aspects.bzl", unused_deps_aspect = "unused_deps")
+
+def _format_direct_dep(f):
+    return "%s\t%s" % (f.owner, f.path)
 
 def _unused_deps(ctx):
+    out = ctx.actions.declare_file("%s.direct.deps.txt" % ctx.attr.subject.label.name)
+    ctx.actions.write(
+        out,
+        ctx.actions.args()
+            .set_param_file_format("multiline")
+            .add_all(ctx.attr.subject[UnusedDepsInfo].direct_deps, map_each = _format_direct_dep)
+    )
     return [
         DefaultInfo(
             files = depset(
-                ctx.attr.subject[DirectDepsInfo].direct_deps +
-                ctx.attr.subject[UsedDepsInfo].used_deps +
-                ctx.attr.subject[UnusedDepsInfo].unused_deps
+                ctx.attr.subject[UnusedDepsInfo].unused_deps +
+                ctx.attr.subject[UnusedDepsInfo].used_deps +
+                [out]
             )
         )
     ]
@@ -22,7 +32,7 @@ unused_deps = rule(
         "subject": attr.label(
             mandatory = True,
             providers = [[JavaInfo]],
-            aspects = [aspect_unused_deps]
+            aspects = [unused_deps_aspect],
         ),
     },
 )
@@ -72,7 +82,7 @@ unused_deps_test = rule(
         "subject": attr.label(
             mandatory = True,
             providers = [[JavaInfo]],
-            aspects = [aspect_unused_deps]
+            aspects = [unused_deps_aspect]
         ),
         "ignore": attr.label_list(
             doc = '''
