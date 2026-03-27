@@ -31,12 +31,12 @@ jobs:
     env:
       USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: bazel-contrib/setup-bazel@0.15.0
+      - uses: bazel-contrib/setup-bazel@0.19.0
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}-${{ matrix.bazel-version }}
           repository-cache: true
+      - uses: actions/checkout@v6
       - run: |
           bazel test ...
           bazel test ... --incompatible_no_implicit_file_export
@@ -50,7 +50,7 @@ jobs:
         run: |
           bazel build :unused-deps_deploy.jar
           echo "bin=$(bazel cquery --output files :unused-deps_deploy.jar)" >> ${GITHUB_OUTPUT}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ !!matrix.artifact }}
         with:
           name: ${{ matrix.artifact }}
@@ -62,9 +62,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
       - id: artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
       - run: |
           echo "ver=${GITHUB_REF_NAME#v}" >> ${GITHUB_ENV}
           sri="$(curl -sSfL ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz |
@@ -74,6 +73,11 @@ jobs:
           bin_sri="$(openssl dgst -sha256 -binary < ${{ steps.artifact.outputs.download-path }}/unused-deps/unused-deps_deploy.jar |
               openssl base64 -A)"
           echo "bin_sri=sha256-${bin_sri}" >> ${GITHUB_ENV}
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            NOTES.md
+          sparse-checkout-cone-mode: false
       - run: |
           export bin_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/unused-deps_deploy.jar"
           gh release create ${GITHUB_REF_NAME} -F <(envsubst < NOTES.md) ${{ steps.artifact.outputs.download-path }}/unused-deps/unused-deps_deploy.jar
