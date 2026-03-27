@@ -2,7 +2,7 @@ name: CI
 
 on:
   schedule:
-    - cron: "17 17 * * *"
+    - cron: "17 17 * * 1s"
   workflow_dispatch:
   push:
     tags:
@@ -31,7 +31,7 @@ jobs:
     env:
       USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
