@@ -29,3 +29,6 @@ maven.install(
 )
 
 use_repo(maven, "rules_unused_deps_maven")
+
+bazel_dep(name = "toolchains_buildbuddy", version = "0.0.4")
+buildbuddy = use_extension("@toolchains_buildbuddy//:extensions.bzl", "buildbuddy")
