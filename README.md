@@ -47,6 +47,14 @@ unused_deps_test(
 )
 ```
 
+Formatted output appears in the test log and is also written to `TEST_UNDECLARED_OUTPUTS_DIR` as `unused_deps.txt`, see [Initial Conditions](https://bazel.build/reference/test-encyclopedia#initial-conditions) in bazel's Test Encyclopedia. 
+
+```shell
+cd e2e/smoke
+bazel test library-with-unused-compile-time-dep-unused-deps-test
+cat bazel-testlogs/library-with-unused-compile-time-dep-unused-deps-test/{test.log,test.outputs/unused-deps.txt}
+```
+
 # `rules_java` and `rules_jvm_external` version conflicts
 
 Use [single_version_override](https://bazel.build/rules/lib/globals/module#single_version_override)
@@ -72,7 +80,7 @@ rewrite repo1.maven.org/maven2/(.*) https://${YOUR_PROXY_HOST}/${YOUR_PROXY_PATH
 # Analysis of Results Outside of Bazel with Remote Execution
 
 If you are using an external (to bazel) tool to further process output you may 
-need to instruct bazel to download the outputs of the test rules. Specifically, 
+need to instruct bazel to download the outputs of the unused_deps rule. Specifically, 
 when using [--remote_download_minimal](https://bazel.build/reference/command-line-reference#common_options-flag--remote_download_minimal) 
 remotely built outputs are not downloaded. Use the [--remote_download_regex](https://bazel.build/reference/command-line-reference#common_options-flag--remote_download_regex) 
 flag to explicitly download these outputs.
@@ -80,7 +88,6 @@ flag to explicitly download these outputs.
 ```
 --remote_download_regex='.*\.unused\.deps\.txt$'
 ```
-
 
 ```shell
 bazel clean
