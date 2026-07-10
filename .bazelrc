@@ -21,3 +21,4 @@ build:bb --crosstool_top=@toolchains_buildbuddy//platforms:linux_x86_64
 build:bb --remote_cache_compression
 build:bb --jobs=50
 build:bb --noslim_profile --experimental_profile_include_target_label --experimental_profile_include_primary_output
+build:bb --build_metadata=REPO_URL=https://github.com/nickbreen/rules_unused_deps
