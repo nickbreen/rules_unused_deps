@@ -6,9 +6,9 @@ def _format_direct_dep(f):
     return "%s\t%s" % (f.owner, f.path)
 
 def _unused_deps(ctx):
-    out = ctx.actions.declare_file("%s.direct.deps.txt" % ctx.attr.subject.label.name)
+    direct_deps = ctx.actions.declare_file("%s.direct.deps.txt" % ctx.attr.subject.label.name)
     ctx.actions.write(
-        out,
+        direct_deps,
         ctx.actions.args()
             .set_param_file_format("multiline")
             .add_all(ctx.attr.subject[UnusedDepsInfo].direct_deps, map_each = _format_direct_dep)
@@ -18,7 +18,7 @@ def _unused_deps(ctx):
             files = depset(
                 ctx.attr.subject[UnusedDepsInfo].unused_deps +
                 ctx.attr.subject[UnusedDepsInfo].used_deps +
-                [out]
+                [direct_deps]
             )
         )
     ]
@@ -54,6 +54,7 @@ def _unused_deps_test(ctx):
     return [
         DefaultInfo(
             executable = executable,
+            files = depset(ctx.attr.subject[UnusedDepsInfo].unused_deps),
             runfiles = ctx.runfiles(
                 files = ctx.attr.subject[UnusedDepsInfo].unused_deps + [ignores])
         ),

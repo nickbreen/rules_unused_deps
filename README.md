@@ -77,34 +77,3 @@ to rewrite maven central repository URL's to your air-gapped repository.
 rewrite repo1.maven.org/maven2/(.*) https://${YOUR_PROXY_HOST}/${YOUR_PROXY_PATH}/$1
 ```
 
-# Analysis of Results Outside of Bazel with Remote Execution
-
-If you are using an external (to bazel) tool to further process output you may 
-need to instruct bazel to download the outputs of the unused_deps rule. Specifically, 
-when using [--remote_download_minimal](https://bazel.build/reference/command-line-reference#common_options-flag--remote_download_minimal) 
-remotely built outputs are not downloaded. Use the [--remote_download_regex](https://bazel.build/reference/command-line-reference#common_options-flag--remote_download_regex) 
-flag to explicitly download these outputs.
-
-```
---remote_download_regex='.*\.unused\.deps\.txt$'
-```
-
-```shell
-bazel clean
-bazel test ... --remote_download_minimal
-find bazel-out/ -name '*.unused.deps.txt' -print -exec sh -uec 'for link; do [ -L $link ] && [ ! -e $link ] && echo Broken! $link; done' - \{\} \+
-```
-Note that the all the symlinks are 'broken'.
-
-```shell
-bazel clean
-bazel test ... --remote_download_minimal
-find bazel-out/ -name '*.unused.deps.txt' -exec readlink -ev \{\} \+
-```
-
-```shell
-bazel clean
-bazel test ... --remote_download_minimal --remote_download_regex='.*\.unused\.deps\.txt$'
-find bazel-out/ -name '*.unused.deps.txt' -exec readlink -ev \{\} \+
-```
-
