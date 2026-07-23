@@ -117,3 +117,26 @@ unused_deps_test(
     subject = ":library-with-two-unused-compile-time-deps",
     tags = ["manual"],
 )
+
+alias(
+    name = "slf4j-api1",
+    actual = artifact("org.slf4j:slf4j-api")
+)
+alias(
+    name = "slf4j-api2",
+    actual = artifact("org.slf4j:slf4j-api")
+)
+
+java_library(
+    name = "library-with-duplicate-compile-time-deps",
+    srcs = glob(["src/main/java/**"]),
+    deps = [
+        ":slf4j-api1",
+        ":slf4j-api2",
+    ],
+)
+
+unused_deps_test(
+    name = "library-with-duplicate-compile-time-deps-unused-deps-test",
+    subject = ":library-with-duplicate-compile-time-deps",
+)
