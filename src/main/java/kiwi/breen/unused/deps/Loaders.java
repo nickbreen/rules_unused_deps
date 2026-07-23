@@ -49,7 +49,8 @@ class Loaders
                     .filter(Matcher::matches)
                     .collect(Collectors.toMap(
                             m -> m.group(1),
-                            m -> m.group(2)
+                            m -> m.group(2),
+                            (existing, replacement) -> existing
                     ));
         }
     }
