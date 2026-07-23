@@ -4,6 +4,70 @@ Check for unused java dependencies for `java_*` target.
 
 See [release notes](https://github.com/nickbreen/rules_unused_deps/releases) for installation instructions.
 
+# Installation
+
+## Using MODULE.bazel (Bzlmod)
+
+For Bazel 7.0 and later, add the following to your `MODULE.bazel`:
+
+```python
+# MODULE.bazel
+bazel_dep(name = "rules_unused_deps", version = "${ver}")
+# This is not published to the BCR, so use an archive_override.
+archive_override(
+    module_name = "rules_unused_deps",
+    urls = [
+        "https://github.com/nickbreen/rules_unused_deps/archive/refs/tags/v${ver}.tar.gz",
+    ],
+    strip_prefix = "rules_unused_deps-${ver}",
+    integrity = "${sri}",
+)
+# Register the toolchain
+register_toolchains("@rules_unused_deps//:all")
+```
+
+## Using WORKSPACE
+
+For Bazel 6.x and projects still using WORKSPACE, add the following to your `WORKSPACE`:
+
+```python
+# WORKSPACE
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "rules_unused_deps",
+    urls = [
+        "https://github.com/nickbreen/rules_unused_deps/archive/refs/tags/v${ver}.tar.gz",
+    ],
+    strip_prefix = "rules_unused_deps-${ver}",
+    sha256 = "${sha256}",
+)
+
+load("@rules_unused_deps//:repositories.bzl", "rules_unused_deps_dependencies")
+
+rules_unused_deps_dependencies()
+
+# Load and setup rules_java
+load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
+rules_java_dependencies()
+rules_java_toolchains()
+
+# Load and setup rules_proto
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
+
+# Load and setup rules_jvm_external
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+rules_jvm_external_setup()
+
+# Register the toolchain
+register_toolchains("@rules_unused_deps//:all")
+```
+
 # Usage
 
 Use the `unused_deps_test` rule on any `java_*` target.
