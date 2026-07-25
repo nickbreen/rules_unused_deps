@@ -15,7 +15,7 @@ on:
 
 jobs:
   test:
-    runs-on: nickbreen-home
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
