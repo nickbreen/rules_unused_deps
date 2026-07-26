@@ -1,4 +1,7 @@
-module(name = "rules_unused_deps")
+module(
+    name = "rules_unused_deps",
+    bazel_compatibility = [">=7.0.0"],
+)
 
 bazel_dep(name = "rules_java", version = "9.6.1")
 bazel_dep(name = "rules_jvm_external", version = "6.10")

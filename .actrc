@@ -1,0 +1,6 @@
+# Run an init process (tini) as PID 1 inside the job container so orphaned
+# child processes (e.g. the Bazel server) are reaped and can be killed.
+# Fixes: "Attempted to kill stale server process ... but it did not die".
+--container-options --init
+--pull=false
+--reuse=true
