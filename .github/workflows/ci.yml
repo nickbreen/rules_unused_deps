@@ -51,8 +51,6 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
-        env:
-          GH_TOKEN: ${{ github.token }}
       - run: |
           bazel build :unused-deps_deploy.jar
           bin="$(bazel cquery --output files :unused-deps_deploy.jar)"
@@ -66,3 +64,5 @@ jobs:
           
           export ver="${GITHUB_REF_NAME#v}"
           gh release create ${GITHUB_REF_NAME} -F <(envsubst < NOTES.md) ${bin} ${src}
+        env:
+          GH_TOKEN: ${{ github.token }}
