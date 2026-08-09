@@ -46,28 +46,31 @@ unused_deps_test(
     subject = ":unused-deps",
 )
 
-srcs = glob(["src/test/java/**"])
-resources = [
-    "//fixtures:fixture1_unused_deps",
-    "//fixtures:fixture2_unused_deps",
-    "//fixtures:fixture1_uber_unused_deps",
-    "//fixtures:fixture2_uber_unused_deps",
-    "//fixtures:fixture3_uber_unused_deps",
-    "//fixtures:fixture1_test_unused_deps",
-]
-deps = [
-    ":unused-deps",
-    ":deps_java_proto",
-    "@rules_unused_deps_maven//:junit_junit",
-    "@rules_unused_deps_maven//:org_hamcrest_hamcrest",
-]
+java_library(
+    name = "unused-deps-test-lib",
+    srcs = glob(["src/test/java/**"]),
+    resources = [
+        "//fixtures:fixture1_unused_deps",
+        "//fixtures:fixture2_unused_deps",
+        "//fixtures:fixture1_uber_unused_deps",
+        "//fixtures:fixture2_uber_unused_deps",
+        "//fixtures:fixture3_uber_unused_deps",
+        "//fixtures:fixture1_test_unused_deps",
+    ],
+    deps = [
+        ":unused-deps",
+        ":deps_java_proto",
+        "@protobuf//:protobuf_java",
+        "@rules_unused_deps_maven//:junit_junit",
+        "@rules_unused_deps_maven//:org_hamcrest_hamcrest",
+    ],
+    testonly = True,
+)
 
 java_test(
     name = "unused-deps-used-test",
     test_class = "kiwi.breen.unused.deps.ProtoFixturesSanityTest",
-    srcs = srcs,
-    resources = resources,
-    deps = deps,
+    runtime_deps = [":unused-deps-test-lib"],
 )
 
 unused_deps_test(
@@ -78,9 +81,7 @@ unused_deps_test(
 java_test(
     name = "unused-deps-direct-test",
     test_class = "kiwi.breen.unused.deps.FixturesSanityTest",
-    srcs = srcs,
-    resources = resources,
-    deps = deps,
+    runtime_deps = [":unused-deps-test-lib"],
 )
 
 unused_deps_test(
@@ -91,9 +92,7 @@ unused_deps_test(
 java_test(
     name = "unused-deps-detect-test",
     test_class = "kiwi.breen.unused.deps.DetectUnusedDepsTest",
-    srcs = srcs,
-    resources = resources,
-    deps = deps,
+    runtime_deps = [":unused-deps-test-lib"],
 )
 
 unused_deps_test(

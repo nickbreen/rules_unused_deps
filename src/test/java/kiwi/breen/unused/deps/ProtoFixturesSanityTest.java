@@ -1,12 +1,14 @@
 package kiwi.breen.unused.deps;
 
 import com.google.devtools.build.lib.view.proto.Deps;
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -79,4 +81,12 @@ public class ProtoFixturesSanityTest
                 ));
     }
 
+    @Test(expected = InvalidProtocolBufferException.class)
+    public void willExplodeWhenJdepsIsCorrupt() throws IOException
+    {
+        try (final InputStream in = Loaders.class.getResourceAsStream(resource))
+        {
+            Deps.Dependencies.parseFrom(in.readNBytes(16));
+        }
+    }
 }
